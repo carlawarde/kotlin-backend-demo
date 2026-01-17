@@ -52,9 +52,9 @@ kotest-property = { module = "io.kotest:kotest-property", version.ref = "kotest"
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 
 # --- Testcontainers ---
-testcontainers-bom = { module = "org.testcontainers:testcontainers-bom", version.ref = "testcontainers" }
-testcontainers-core = { module = "org.testcontainers:testcontainers"}
-testcontainers-postgres = { module = "org.testcontainers:postgresql"}
+testcontainers-core = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
+testcontainers-postgres = { module = "org.testcontainers:testcontainers-postgresql", version.ref = "testcontainers" }
+testcontainers-jdbc = { module = "org.testcontainers:testcontainers-jdbc", version.ref = "testcontainers" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
@@ -68,4 +68,4 @@ koin = ["koin-ktor", "koin-logger", "koin-test"]
 exposed = ["exposed-core", "exposed-dao", "exposed-jdbc"]
 db-infra = ["hikari", "flyway-core", "flyway-postgres", "postgres-driver"]
 testing-common = ["kotest-runner", "kotest-assertions", "kotest-property", "mockk"]
-testing-integration = ["testcontainers-bom", "testcontainers-core", "testcontainers-postgres"]
+testing-integration = ["testcontainers-core", "testcontainers-postgres", "testcontainers-jdbc"]
