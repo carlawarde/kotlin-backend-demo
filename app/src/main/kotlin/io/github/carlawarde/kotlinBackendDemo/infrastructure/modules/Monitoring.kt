@@ -1,12 +1,10 @@
 package io.github.carlawarde.kotlinBackendDemo.infrastructure.modules
 
+import io.github.carlawarde.kotlinBackendDemo.infrastructure.monitoring.configureHealthGauges
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.metrics.micrometer.MicrometerMetrics
 import io.ktor.server.plugins.calllogging.CallLogging
-import io.ktor.server.response.respond
-import io.ktor.server.routing.get
-import io.ktor.server.routing.routing
 import io.micrometer.core.instrument.binder.jvm.ClassLoaderMetrics
 import io.micrometer.core.instrument.binder.jvm.JvmGcMetrics
 import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics
@@ -36,12 +34,6 @@ fun Application.configureMonitoring(): PrometheusMeterRegistry {
 
     install(CallLogging) {
         level = Level.INFO
-    }
-
-    routing {
-        get("/metrics") {
-            call.respond(appMicrometerRegistry.scrape())
-        }
     }
 
     return appMicrometerRegistry
