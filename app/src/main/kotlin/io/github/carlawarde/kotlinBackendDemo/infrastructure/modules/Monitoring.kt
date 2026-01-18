@@ -1,4 +1,4 @@
-package io.github.carlawarde.kotlinBackendDemo.infrastructure.plugins
+package io.github.carlawarde.kotlinBackendDemo.infrastructure.modules
 
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
@@ -16,10 +16,9 @@ import io.micrometer.core.instrument.binder.system.ProcessorMetrics
 import io.micrometer.core.instrument.binder.system.UptimeMetrics
 import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
-import org.koin.ktor.ext.inject
 import org.slf4j.event.Level
 
-fun Application.configureMonitoring() {
+fun Application.configureMonitoring(): PrometheusMeterRegistry {
     val appMicrometerRegistry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
 
     install(MicrometerMetrics) {
@@ -44,4 +43,6 @@ fun Application.configureMonitoring() {
             call.respond(appMicrometerRegistry.scrape())
         }
     }
+
+    return appMicrometerRegistry
 }

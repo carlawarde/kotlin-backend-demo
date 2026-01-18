@@ -1,12 +1,11 @@
-package io.github.carlawarde.kotlinBackendDemo.config
+package io.github.carlawarde.kotlinBackendDemo.infrastructure.config
 
 import io.ktor.server.config.ApplicationConfig
 
 class AppConfig(config: ApplicationConfig) {
-    val port = config.propertyOrNull("ktor.deployment.port")?.getString()?.toInt() ?: 8080
+    val port = config.property("ktor.deployment.port").getString().trim().toInt()
 
-    val dbDriver = config.property("database.driver-name").getString()
-    val dbUrl = config.property("database.jdbc-url").getString()
-    val dbUser = config.property("database.user").getString()
-    val dbPassword = config.property("database.password").getString()
+    val dbUrl = config.property("database.url").getString().trim()
+    val dbUser = config.property("database.user").getString().trim()
+    val dbPassword = config.property("database.password").getString().trim()
 }

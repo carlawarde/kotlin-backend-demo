@@ -1,4 +1,4 @@
-package io.github.carlawarde.kotlinBackendDemo.infrastructure.plugins
+package io.github.carlawarde.kotlinBackendDemo.infrastructure.modules
 
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application

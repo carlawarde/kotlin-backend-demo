@@ -3,11 +3,11 @@ package io.github.carlawarde.kotlinBackendDemo.infrastructure.db
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.github.carlawarde.kotlinBackendDemo.infrastructure.config.AppConfig
-import io.micrometer.core.instrument.MeterRegistry
+import io.micrometer.prometheus.PrometheusMeterRegistry
 import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.v1.jdbc.Database
 
-class DatabaseFactory(private val config: AppConfig, private val meterRegistry: MeterRegistry) {
+class DatabaseManager(private val config: AppConfig, private val meterRegistry: PrometheusMeterRegistry) {
     private lateinit var dataSource: HikariDataSource
 
     fun start() {
@@ -24,7 +24,6 @@ class DatabaseFactory(private val config: AppConfig, private val meterRegistry: 
 
     private fun createDataSource(): HikariDataSource {
         val hikariConfig = HikariConfig().apply {
-            driverClassName = config.dbDriver
             jdbcUrl = config.dbUrl
             username = config.dbUser
             password = config.dbPassword
