@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ktor)
+    alias(libs.plugins.shadow)
     // Apply the application plugin to add support for building a CLI application in Java.
     application
 }
