@@ -11,4 +11,4 @@ plugins {
 }
 
 rootProject.name = "kotlin-backend-demo"
-include("app")
+include("server")

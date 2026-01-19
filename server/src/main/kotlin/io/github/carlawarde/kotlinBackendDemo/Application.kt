@@ -1,7 +1,8 @@
 package io.github.carlawarde.kotlinBackendDemo
 
+import com.typesafe.config.Config
 import io.github.carlawarde.kotlinBackendDemo.infrastructure.lifecycle.JobRunner
-import io.github.carlawarde.kotlinBackendDemo.infrastructure.config.AppConfig
+import io.github.carlawarde.kotlinBackendDemo.infrastructure.config.loadAppConfig
 import io.github.carlawarde.kotlinBackendDemo.infrastructure.modules.installAppDependencies
 import io.github.carlawarde.kotlinBackendDemo.infrastructure.modules.configureDatabase
 import io.github.carlawarde.kotlinBackendDemo.infrastructure.modules.configureMonitoring
@@ -18,11 +19,12 @@ fun main(args: Array<String>): Unit = EngineMain.main(args)
 fun Application.module() {
     val logger = LoggerFactory.getLogger(Application::class.java)
 
-    val appConfig = AppConfig(environment.config)
-    logger.info("Configuring modules...")
+    logger.info("Loading configuration...")
+    val appConfig = loadAppConfig(environment.config)
 
+    logger.info("Configuring modules...")
     val metricsRegistry = configureMonitoring()
-    val database = configureDatabase(appConfig, metricsRegistry)
+    val database = configureDatabase(appConfig.database, metricsRegistry)
     configureHealthGauges(metricsRegistry)
     configureSerialization()
     configureStatusPages()
