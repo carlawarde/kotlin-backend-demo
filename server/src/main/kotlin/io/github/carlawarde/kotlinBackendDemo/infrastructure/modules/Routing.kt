@@ -12,6 +12,6 @@ import io.micrometer.prometheus.PrometheusMeterRegistry
 
 fun Application.configureRouting(registry: PrometheusMeterRegistry, database: DatabaseManager) {
     routing {
-        monitoringRoutes(registry, database)
+        monitoringRoutes(registry)
     }
 }
