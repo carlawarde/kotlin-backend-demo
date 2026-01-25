@@ -1,9 +1,10 @@
-package io.github.carlawarde.kotlinBackendDemo.infrastructure.modules
+package io.github.carlawarde.kotlinBackendDemo.infrastructure.plugins
 
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.metrics.micrometer.MicrometerMetrics
 import io.ktor.server.plugins.calllogging.CallLogging
+import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.binder.jvm.ClassLoaderMetrics
 import io.micrometer.core.instrument.binder.jvm.JvmGcMetrics
 import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics
@@ -35,5 +36,10 @@ fun Application.configureMonitoring(): PrometheusMeterRegistry {
         level = Level.INFO
     }
 
+    install(RouteMetricsPlugin) {
+        registry = appMicrometerRegistry
+    }
+
     return appMicrometerRegistry
 }
+

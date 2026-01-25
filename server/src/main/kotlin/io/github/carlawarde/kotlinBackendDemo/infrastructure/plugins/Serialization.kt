@@ -1,4 +1,4 @@
-package io.github.carlawarde.kotlinBackendDemo.infrastructure.modules
+package io.github.carlawarde.kotlinBackendDemo.infrastructure.plugins
 
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
