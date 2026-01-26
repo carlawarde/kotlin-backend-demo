@@ -10,8 +10,14 @@ if [[ "${1:-}" == "down" ]]; then
     exit 0
 fi
 
+echo "Building Kotlin app Docker image with version: $APP_VERSION"
+docker build \
+    --build-arg APP_VERSION="$APP_VERSION" \
+    -t kotlin-backend-demo:"$APP_VERSION" .
+
 echo "Starting app and database with Docker Compose..."
 APP_VERSION="$APP_VERSION" docker-compose -f "$COMPOSE_FILE" up -d --build
 
 echo "Tailing logs (press Ctrl+C to stop)"
 docker-compose -f "$COMPOSE_FILE" logs -f
+

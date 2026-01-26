@@ -123,7 +123,6 @@ tasks.named<Test>("integrationTest") {
 }
 
 tasks.withType<ShadowJar> {
-    archiveBaseName.set("kotlin-backend-demo")
     archiveClassifier.set("")
     archiveVersion.set(project.version.toString())
     archiveFileName.set("${archiveBaseName.get()}-${archiveVersion.get()}.jar")

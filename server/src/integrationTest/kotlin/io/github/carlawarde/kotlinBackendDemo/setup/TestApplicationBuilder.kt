@@ -17,6 +17,7 @@ import io.micrometer.core.instrument.simple.SimpleMeterRegistry
 
 
 fun ApplicationTestBuilder.buildTestApp(
+    startDatabase: Boolean = true,
     configure: Application.(TestDeps) -> Unit
 ): HttpClient {
 
@@ -28,9 +29,16 @@ fun ApplicationTestBuilder.buildTestApp(
 
     application {
         val appConfig = loadAppConfig(environment.config)
-        val databaseManager = configureDatabase(appConfig.database, registry)
+
+        val databaseManager = if (startDatabase) {
+            configureDatabase(appConfig.database, registry)
+        } else {
+            DatabaseManager(appConfig.database, registry)
+        }
+
         configureSerialization()
         configureStatusPages()
+
         configure(
             TestDeps(
                 registry = registry,

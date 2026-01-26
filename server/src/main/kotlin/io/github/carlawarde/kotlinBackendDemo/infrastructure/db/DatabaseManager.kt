@@ -10,33 +10,40 @@ import org.jetbrains.exposed.v1.jdbc.Database
 
 class DatabaseManager(private val config: DatabaseConfig, private val meterRegistry: MeterRegistry) {
     private val logger = KotlinLogging.logger {}
-    private lateinit var dataSource: HikariDataSource
+    private var dataSource: HikariDataSource? = null
 
     fun start() {
-        dataSource = createDataSource()
-        //runFlyway(datasource)
-        Database.connect(dataSource)
+        if (dataSource != null) {
+            logger.info("DataSource already started, skipping initialization...")
+        } else {
+            dataSource = createDataSource()
+            //runFlyway(datasource)
+            Database.connect(dataSource!!)
+        }
     }
 
     fun stop() {
-        if (::dataSource.isInitialized) {
-            dataSource.close()
+        if (dataSource == null) {
+            logger.warn("DataSource is not initialized, skipping stop...")
+        } else {
+            dataSource?.close()
+            dataSource = null
         }
     }
 
     fun isConnected(): Boolean {
-        if (!::dataSource.isInitialized) {
-            logger.warn("DataSource not initialized yet")
+        if (dataSource == null) {
+            logger.warn("DataSource is not initialized, skipping connection check...")
             return false
-        }
-
-        return try {
-            dataSource.connection.use { conn ->
-                conn.isValid(2)
+        } else {
+            return try {
+                dataSource!!.connection.use { conn ->
+                    conn.isValid(2)
+                }
+            } catch (e: Exception) {
+                logger.error("Error database connection", e)
+                false
             }
-        } catch (e: Exception) {
-            logger.error("Error database connection", e)
-            false
         }
     }
 
