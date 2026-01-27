@@ -20,6 +20,11 @@ class ConfigLoaderTest: FunSpec({
         every { property("database.user").getString() } returns "user"
         every { property("database.password").getString() } returns "pass"
 
+        every { property("metrics.service").getString() } returns "service"
+        every { property("metrics.environment").getString() } returns "environment"
+        every { property("metrics.region").getString() } returns "region"
+        every { property("metrics.instance").getString() } returns "instance"
+
         every { propertyOrNull("ktor.deployment.port") } returns null
     }
 
@@ -34,6 +39,13 @@ class ConfigLoaderTest: FunSpec({
             name shouldBe "demo_db"
             user shouldBe "user"
             password shouldBe "pass"
+        }
+
+        with(appConfig.metrics) {
+            service shouldBe "service"
+            environment shouldBe "environment"
+            region shouldBe "region"
+            instance shouldBe "instance"
         }
     }
 

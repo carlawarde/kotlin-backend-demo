@@ -119,6 +119,7 @@ tasks.check {
 }
 
 tasks.named<Test>("integrationTest") {
+    dependsOn("assembleShadowDist")
     shouldRunAfter(tasks.named("test"))
 }
 
@@ -127,6 +128,12 @@ tasks.withType<ShadowJar> {
     archiveVersion.set(project.version.toString())
     archiveFileName.set("${archiveBaseName.get()}-${archiveVersion.get()}.jar")
 }
+
+tasks.named<Jar>("jar") { enabled = false }
+tasks.named("startScripts") { enabled = false }
+tasks.named("installDist") { enabled = false }
+tasks.named("distZip") { enabled = false }
+tasks.named("distTar") { enabled = false }
 
 
 

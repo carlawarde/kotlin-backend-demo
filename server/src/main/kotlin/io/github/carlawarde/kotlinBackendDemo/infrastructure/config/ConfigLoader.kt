@@ -15,6 +15,14 @@ fun loadAppConfig(config: ApplicationConfig): AppConfig =
                     user = getStringProperty("database.user"),
                     password = getStringProperty("database.password")
                 )
+            },
+            metrics = run {
+                MetricsConfig(
+                    service = getStringProperty("metrics.service"),
+                    environment = getStringProperty("metrics.environment"),
+                    region = getStringProperty("metrics.region"),
+                    instance = getStringProperty("metrics.instance")
+                )
             }
         )
     }

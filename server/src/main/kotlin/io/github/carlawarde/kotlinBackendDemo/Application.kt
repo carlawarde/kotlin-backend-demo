@@ -9,7 +9,6 @@ import io.github.carlawarde.kotlinBackendDemo.infrastructure.monitoring.HealthMe
 import io.github.carlawarde.kotlinBackendDemo.infrastructure.plugins.*
 import io.ktor.server.application.*
 import io.ktor.server.netty.*
-import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import org.slf4j.LoggerFactory
 
@@ -23,14 +22,17 @@ fun Application.module() {
     val appConfig = loadAppConfig(environment.config)
 
     logger.info("Configuring plugins...")
-    val registry = configureMonitoring()
+    val registry = configureMonitoring(appConfig.metrics)
     val database = configureDatabase(appConfig.database, registry)
-    val appInfoService = AppInfoService(database)
     configureDependencyInjection(database)
     configureSerialization()
     configureStatusPages()
+
+    val appInfoService = AppInfoService(database)
     configureRoutes(appInfoService, registry)
+
     HealthMetrics.build(registry, appInfoService)
+    //AppJobMetrics.build(registry)
 
     appInfoService.setStatus(State.RUNNING)
 

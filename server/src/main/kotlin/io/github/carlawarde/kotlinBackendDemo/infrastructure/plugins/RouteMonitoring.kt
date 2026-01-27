@@ -1,6 +1,5 @@
 package io.github.carlawarde.kotlinBackendDemo.infrastructure.plugins
 
-import io.github.carlawarde.kotlinBackendDemo.infrastructure.monitoring.MetricScope
 import io.ktor.server.application.*
 import io.ktor.server.application.hooks.CallFailed
 import io.ktor.server.request.httpMethod
@@ -18,7 +17,7 @@ val RouteMetricsPlugin = createApplicationPlugin(
     name = "RouteMetrics",
     createConfiguration = ::RouteMetricsConfig
 ) {
-    val registry = pluginConfig.registry
+    /*val registry = pluginConfig.registry
     val ignoredPaths = listOf("/metrics", "/health")
 
     onCall { call ->
@@ -59,5 +58,5 @@ val RouteMetricsPlugin = createApplicationPlugin(
         )
 
         registry.counter("app_operation_errors_total", tags).increment()
-    }
+    }*/
 }
