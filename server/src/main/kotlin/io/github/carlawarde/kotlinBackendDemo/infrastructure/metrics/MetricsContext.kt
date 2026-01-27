@@ -1,4 +1,4 @@
-package io.github.carlawarde.kotlinBackendDemo.infrastructure.monitoring
+package io.github.carlawarde.kotlinBackendDemo.infrastructure.metrics
 
 data class MetricsContext(
     val service: String,

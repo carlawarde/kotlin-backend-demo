@@ -15,9 +15,11 @@ import io.micrometer.core.instrument.binder.jvm.JvmThreadMetrics
 import io.micrometer.core.instrument.binder.system.FileDescriptorMetrics
 import io.micrometer.core.instrument.binder.system.ProcessorMetrics
 import io.micrometer.core.instrument.binder.system.UptimeMetrics
+import io.micrometer.core.instrument.config.MeterFilter
 import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import org.slf4j.event.Level
+import java.util.UUID
 
 fun Application.configureMonitoring(metricsConfig: MetricsConfig): PrometheusMeterRegistry {
     val appMicrometerRegistry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
@@ -40,14 +42,18 @@ fun Application.configureMonitoring(metricsConfig: MetricsConfig): PrometheusMet
             "region", metricsConfig.region,
             "instance", metricsConfig.instance
         )
+
+        registry.config().meterFilter(MeterFilter.ignoreTags("uri", "exception"))
     }
 
-    /*install(RouteMetricsPlugin) {
+    install(RouteMetricsPlugin) {
         registry = appMicrometerRegistry
-    }*/
+    }
 
     install(CallId) {
-        retrieveFromHeader(HttpHeaders.XRequestId)
+        header("X-Request-Id")
+        generate { UUID.randomUUID().toString() }
+        verify { it.isNotBlank() }
     }
 
     install(CallLogging) {

@@ -1,62 +1,52 @@
 package io.github.carlawarde.kotlinBackendDemo.infrastructure.plugins
 
+import io.github.carlawarde.kotlinBackendDemo.core.metrics.ApiMetrics
+import io.github.carlawarde.kotlinBackendDemo.core.metrics.ApiAction
 import io.ktor.server.application.*
 import io.ktor.server.application.hooks.CallFailed
-import io.ktor.server.request.httpMethod
 import io.ktor.server.request.path
 import io.ktor.util.*
 import io.micrometer.core.instrument.MeterRegistry
-import io.micrometer.core.instrument.Tag
-import java.util.concurrent.TimeUnit
 
 class RouteMetricsConfig {
     lateinit var registry: MeterRegistry
+    val ignoredPaths: List<String> = listOf("/metrics", "/health")
 }
 
 val RouteMetricsPlugin = createApplicationPlugin(
     name = "RouteMetrics",
     createConfiguration = ::RouteMetricsConfig
 ) {
-    /*val registry = pluginConfig.registry
-    val ignoredPaths = listOf("/metrics", "/health")
+    val registry = pluginConfig.registry
+    val ignoredPaths = pluginConfig.ignoredPaths
+    val startTimeKey = AttributeKey<Long>("RouteMetrics.startTime")
+    val actionKey = AttributeKey<ApiAction>("RouteMetrics.action")
 
     onCall { call ->
-        if (call.request.path() in ignoredPaths) return@onCall
-
-        call.attributes.put(AttributeKey("startTime"), System.nanoTime())
+        if (call.request.path() !in ignoredPaths) {
+            call.attributes.put(startTimeKey, System.currentTimeMillis())
+        }
     }
 
     onCallRespond { call ->
         if (call.request.path() in ignoredPaths) return@onCallRespond
 
-        val startTime = call.attributes.getOrNull(AttributeKey<Long>("startTime")) ?: return@onCallRespond
-        val duration = System.nanoTime() - startTime
+        val startTime = call.attributes.getOrNull(startTimeKey) ?: return@onCallRespond
+        val durationMs = System.currentTimeMillis() - startTime
 
-        val component = call.attributes.getOrNull(AttributeKey<String>("component")) ?: call.request.path()
-
-        val tags = listOf(
-            Tag.of("scope", MetricScope.ROUTE.name),
-            Tag.of("component", component),
-            Tag.of("operation", call.request.httpMethod.value),
-            Tag.of("status", call.response.status()?.value?.toString() ?: "unknown")
-        )
-
-        registry.timer("app_operation_duration", tags).record(duration, TimeUnit.NANOSECONDS)
-        registry.counter("app_operation_total", tags).increment()
+        call.attributes.getOrNull(actionKey)?.let { action ->
+            ApiMetrics.recordSuccess(registry, action, durationMs)
+        }
     }
 
     on(CallFailed) { call, cause ->
         if (call.request.path() in ignoredPaths) return@on
 
-        val component = call.attributes.getOrNull(AttributeKey<String>("component")) ?: call.request.path()
+        val startTime = call.attributes.getOrNull(startTimeKey) ?: return@on
+        val durationMs = System.currentTimeMillis() - startTime
 
-        val tags = listOf(
-            Tag.of("scope", MetricScope.ROUTE.name),
-            Tag.of("component", component),
-            Tag.of("operation", call.request.httpMethod.value),
-            Tag.of("error", cause::class.simpleName ?: "unknown")
-        )
-
-        registry.counter("app_operation_errors_total", tags).increment()
-    }*/
+        call.attributes.getOrNull(actionKey)?.let { action ->
+            ApiMetrics.recordFailure(registry, action,  durationMs)
+        }
+    }
 }

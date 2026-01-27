@@ -67,7 +67,8 @@ testing {
             useJUnitJupiter()
 
             dependencies {
-                implementation(project())
+                implementation(files(tasks.named<ShadowJar>("shadowJar").get().archiveFile))
+
                 implementation(libs.kotest.runner)
                 implementation(libs.kotest.assertions.core)
                 implementation(libs.kotest.property)
@@ -119,7 +120,7 @@ tasks.check {
 }
 
 tasks.named<Test>("integrationTest") {
-    dependsOn("assembleShadowDist")
+    dependsOn("shadowJar")
     shouldRunAfter(tasks.named("test"))
 }
 
