@@ -38,26 +38,26 @@ object ApiMetrics {
     fun recordSuccess(
         registry: MeterRegistry,
         action: ApiAction,
-        durationMs: Long
+        durationNs: Long
     ) {
-        record( registry, action, durationMs, "success")
+        record( registry, action, durationNs, "success")
     }
 
     fun recordFailure(
         registry: MeterRegistry,
         action: ApiAction,
-        durationMs: Long
+        durationNs: Long
     ) {
-        record(registry, action, durationMs, "failure")
+        record(registry, action, durationNs, "failure")
     }
 
     internal fun findAllTags(): List<Tags> {
         val outcomes = listOf("success", "failure")
 
         return listOf(
-            ReviewAction.Companion.all,
-            UserAction.Companion.all,
-            GameAction.Companion.all
+            ReviewAction.all,
+            UserAction.all,
+            GameAction.all
         ).flatten().flatMap { action ->
             outcomes.map { outcome ->
                 Tags.of(
@@ -72,7 +72,7 @@ object ApiMetrics {
     private fun record(
         registry: MeterRegistry,
         action: ApiAction,
-        durationMs: Long,
+        durationNs: Long,
         outcome: String
     ) {
         val tags = Tags.of(
@@ -82,7 +82,7 @@ object ApiMetrics {
         )
 
         registry.timer(API_DURATION_NAME, tags)
-            .record(durationMs, TimeUnit.MILLISECONDS)
+            .record(durationNs, TimeUnit.NANOSECONDS)
 
         registry.counter(API_REQUESTS_TOTAL_NAME, tags)
             .increment()
