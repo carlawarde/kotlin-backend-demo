@@ -11,21 +11,31 @@ hikari = "7.0.2"
 flyway = "11.20.0"
 postgres = "42.7.1"
 testcontainers = "2.0.3"
-kotest = "5.8.0"
+kotest = "6.0.1"
 mockk = "1.14.7"
 micrometer = "1.12.8"
 shadow = "9.0.0"
+kotlin-logging = "3.0.5"
 
 [libraries]
 # --- Ktor ---
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
 ktor-server-netty = { module = "io.ktor:ktor-server-netty-jvm", version.ref = "ktor" }
+ktor-server-call-id = {module = "io.ktor:ktor-server-call-id", version.ref = "ktor" }
 ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation-jvm", version.ref = "ktor" }
-ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json-jvm", version.ref = "ktor" }
 ktor-server-metrics = { module = "io.ktor:ktor-server-metrics-micrometer", version.ref= "ktor" }
 ktor-server-test-host = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
 ktor-server-status-pages = { module = "io.ktor:ktor-server-status-pages", version.ref = "ktor" }
+ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json-jvm", version.ref = "ktor" }
+
+typesafe-config = { module = "com.typesafe:config", version = "typesafe" }
+
+# --- Logging ---
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+kotlin-logging = { module = "io.github.microutils:kotlin-logging", version.ref = "kotlin-logging" }
 
 # --- Observability ---
 micrometer-core = { module = "io.micrometer:micrometer-core", version.ref = "micrometer" }
@@ -49,8 +59,10 @@ postgres-driver = { module = "org.postgresql:postgresql", version.ref = "postgre
 
 # --- Testing ---
 kotest-runner = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
-kotest-assertions = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
+kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
+kotest-assertions-ktor = { module = "io.kotest:kotest-assertions-ktor-jvm", version.ref = "kotest" }
 kotest-property = { module = "io.kotest:kotest-property", version.ref = "kotest" }
+kotest-extensions-testcontainers = { module = "io.kotest:kotest-extensions-testcontainers-jvm", version.ref = "kotest" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 
 # --- Testcontainers ---
@@ -65,10 +77,11 @@ ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
 
 [bundles]
-ktor-server = ["ktor-server-core", "ktor-server-netty", "ktor-server-content-negotiation", "ktor-serialization-json", "ktor-server-metrics", "ktor-server-test-host", "ktor-server-status-pages", "logback-classic"]
+ktor-server = ["ktor-server-core", "ktor-server-netty", "ktor-server-content-negotiation", "ktor-serialization-json", "ktor-server-metrics", "ktor-server-test-host", "ktor-server-status-pages", "ktor-server-call-id"]
+logging = ["logback-classic", "kotlin-logging"]
 observability = ["micrometer-core", "micrometer-registry-prometheus"]
 koin = ["koin-ktor", "koin-logger", "koin-test"]
 exposed = ["exposed-core", "exposed-dao", "exposed-jdbc"]
 db-infra = ["hikari", "flyway-core", "flyway-postgres", "postgres-driver"]
-testing-common = ["kotest-runner", "kotest-assertions", "kotest-property", "mockk"]
-testing-integration = ["testcontainers-core", "testcontainers-postgres", "testcontainers-jdbc"]
+testing-common = ["kotest-runner", "kotest-property", "kotest-assertions-core", "kotest-assertions-ktor", "mockk"]
+testing-integration = ["testcontainers-core", "testcontainers-postgres", "testcontainers-jdbc", "kotest-extensions-testcontainers", "ktor-client-cio", "ktor-client-core", "ktor-client-content-negotiation"]

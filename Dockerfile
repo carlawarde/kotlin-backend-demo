@@ -23,17 +23,8 @@ WORKDIR /app
 
 # Copy the fat JAR from build stage
 ARG APP_VERSION=1.0.0-SNAPSHOT
-COPY --from=build /app/server/build/libs/kotlin-backend-demo-$APP_VERSION.jar app.jar
+COPY --from=build /app/server/build/libs/server-$APP_VERSION.jar app.jar
 
 EXPOSE 8080
 
-# =========================
-# Health check
-# =========================
-HEALTHCHECK --interval=15s --timeout=5s --start-period=10s --retries=3 \
-    CMD curl -f http://localhost:8080/health/live || exit 1
-
-# =========================
-# Entrypoint
-# =========================
 ENTRYPOINT ["java", "-jar", "app.jar"]

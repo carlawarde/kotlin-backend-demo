@@ -3,22 +3,33 @@ package io.github.carlawarde.kotlinBackendDemo.infrastructure.config
 import io.ktor.server.config.ApplicationConfig
 
 fun loadAppConfig(config: ApplicationConfig): AppConfig =
-    AppConfig(
-        port = config.getPropertyAsInt("ktor.deployment.port"),
-        database = DatabaseConfig(
-            type = config.getPropertyAsString("database.type"),
-            host = config.getPropertyAsString("database.host"),
-            port = config.getPropertyAsInt("database.port"),
-            name = config.getPropertyAsString("database.name"),
-            user = config.getPropertyAsString("database.user"),
-            password = config.getPropertyAsString("database.password")
+    with(config) {
+        AppConfig(
+            port = getIntProperty("ktor.deployment.port"),
+            database = run {
+                DatabaseConfig(
+                    type = getStringProperty("database.type"),
+                    host = getStringProperty("database.host"),
+                    port = getIntProperty("database.port"),
+                    name = getStringProperty("database.name"),
+                    user = getStringProperty("database.user"),
+                    password = getStringProperty("database.password")
+                )
+            },
+            metrics = run {
+                MetricsConfig(
+                    service = getStringProperty("metrics.service"),
+                    environment = getStringProperty("metrics.environment"),
+                    region = getStringProperty("metrics.region"),
+                    instance = getStringProperty("metrics.instance")
+                )
+            }
         )
-    )
+    }
 
-fun ApplicationConfig.getPropertyAsString(path: String): String =
+
+fun ApplicationConfig.getStringProperty(path: String): String =
     property(path).getString()
 
-fun ApplicationConfig.getPropertyAsInt(path: String, default: Int? = null): Int =
-    propertyOrNull(path)?.getString()?.toInt()
-        ?: default
-        ?: error("Missing config value: $path")
+fun ApplicationConfig.getIntProperty(path: String): Int =
+    property(path).getString().toInt()

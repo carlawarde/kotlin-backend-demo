@@ -1,7 +1,8 @@
 package io.github.carlawarde.kotlinBackendDemo.infrastructure.lifecycle
 
 enum class State {
+    STARTING,
     RUNNING,
-    SHUTTING_DOWN,
+    DRAINING,
     STOPPED
 }
