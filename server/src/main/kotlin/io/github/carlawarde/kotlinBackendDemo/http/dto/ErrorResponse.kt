@@ -1,4 +1,4 @@
-package io.github.carlawarde.kotlinBackendDemo.infrastructure.http
+package io.github.carlawarde.kotlinBackendDemo.http.dto
 
 import kotlinx.serialization.Serializable
 

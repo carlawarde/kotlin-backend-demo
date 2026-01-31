@@ -3,8 +3,8 @@ package io.github.carlawarde.kotlinBackendDemo.infrastructure.plugins
 import io.github.carlawarde.kotlinBackendDemo.core.errors.*
 import io.github.carlawarde.kotlinBackendDemo.infrastructure.errors.InternalServerError
 import io.github.carlawarde.kotlinBackendDemo.infrastructure.errors.NotFoundError
-import io.github.carlawarde.kotlinBackendDemo.infrastructure.http.ErrorResponse
-import io.github.carlawarde.kotlinBackendDemo.infrastructure.http.ValidationErrorResponse
+import io.github.carlawarde.kotlinBackendDemo.http.dto.ErrorResponse
+import io.github.carlawarde.kotlinBackendDemo.http.dto.ValidationErrorResponse
 import io.github.carlawarde.kotlinBackendDemo.utils.HttpUtils.toHttpStatus
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application

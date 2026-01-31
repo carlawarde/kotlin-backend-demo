@@ -1,6 +1,6 @@
 package io.github.carlawarde.kotlinBackendDemo.infrastructure.plugins
 
-import io.github.carlawarde.kotlinBackendDemo.core.api.routes.coreRoutes
+import io.github.carlawarde.kotlinBackendDemo.http.routes.coreRoutes
 import io.github.carlawarde.kotlinBackendDemo.infrastructure.lifecycle.AppInfoService
 import io.github.carlawarde.kotlinBackendDemo.infrastructure.lifecycle.appInfoRoutes
 import io.github.carlawarde.kotlinBackendDemo.infrastructure.metrics.metricsRoutes

@@ -16,6 +16,7 @@ mockk = "1.14.7"
 micrometer = "1.12.8"
 shadow = "9.0.0"
 kotlin-logging = "3.0.5"
+bcrypt = "0.10.2"
 
 [libraries]
 # --- Ktor ---
@@ -49,6 +50,7 @@ koin-test = { module = "io.insert-koin:koin-test", version.ref = "koin" }
 # --- Database (Exposed) ---
 exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
 exposed-dao = { module = "org.jetbrains.exposed:exposed-dao", version.ref = "exposed" }
+exposed-date-time = { module = "org.jetbrains.exposed:exposed-kotlin-datetime", version.ref = "exposed" }
 exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed" }
 
 # --- Database (Infrastructure) ---
@@ -81,7 +83,7 @@ ktor-server = ["ktor-server-core", "ktor-server-netty", "ktor-server-content-neg
 logging = ["logback-classic", "kotlin-logging"]
 observability = ["micrometer-core", "micrometer-registry-prometheus"]
 koin = ["koin-ktor", "koin-logger", "koin-test"]
-exposed = ["exposed-core", "exposed-dao", "exposed-jdbc"]
+exposed = ["exposed-core", "exposed-dao", "exposed-jdbc", "exposed-date-time"]
 db-infra = ["hikari", "flyway-core", "flyway-postgres", "postgres-driver"]
 testing-common = ["kotest-runner", "kotest-property", "kotest-assertions-core", "kotest-assertions-ktor", "mockk"]
 testing-integration = ["testcontainers-core", "testcontainers-postgres", "testcontainers-jdbc", "kotest-extensions-testcontainers", "ktor-client-cio", "ktor-client-core", "ktor-client-content-negotiation"]

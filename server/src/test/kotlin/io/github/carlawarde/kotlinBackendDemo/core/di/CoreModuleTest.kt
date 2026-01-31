@@ -9,12 +9,12 @@ import org.koin.core.annotation.KoinExperimentalAPI
 import org.koin.test.verify.verify
 
 @OptIn(KoinExperimentalAPI::class)
-class AppModuleTest: FunSpec({
+class CoreModuleTest: FunSpec({
 
     test("koin graph should be valid") {
         val mockDatabaseManager = mockk<DatabaseManager>()
 
-        appModule(mockDatabaseManager).verify(
+        coreModule(mockDatabaseManager).verify(
             extraTypes = listOf(
                 DatabaseConfig::class,
                 MeterRegistry::class,
