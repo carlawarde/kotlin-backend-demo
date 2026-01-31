@@ -1,16 +1,17 @@
 package io.github.carlawarde.kotlinBackendDemo.infrastructure.plugins
 
-import io.github.carlawarde.kotlinBackendDemo.core.errors.AppException
-import io.github.carlawarde.kotlinBackendDemo.core.errors.AuthError
-import io.github.carlawarde.kotlinBackendDemo.core.errors.NotFoundError
-import io.github.carlawarde.kotlinBackendDemo.core.errors.ValidationError
-import io.github.carlawarde.kotlinBackendDemo.infrastructure.errors.SystemError
+import io.github.carlawarde.kotlinBackendDemo.core.errors.*
+import io.github.carlawarde.kotlinBackendDemo.infrastructure.errors.InternalServerError
+import io.github.carlawarde.kotlinBackendDemo.infrastructure.errors.NotFoundError
+import io.github.carlawarde.kotlinBackendDemo.infrastructure.http.ErrorResponse
+import io.github.carlawarde.kotlinBackendDemo.infrastructure.http.ValidationErrorResponse
+import io.github.carlawarde.kotlinBackendDemo.utils.HttpUtils.toHttpStatus
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.request.path
-import io.ktor.server.response.respondText
+import io.ktor.server.response.respond
 import mu.KotlinLogging
 
 fun Application.configureStatusPages() {
@@ -18,24 +19,34 @@ fun Application.configureStatusPages() {
 
     install(StatusPages) {
 
-        exception<AppException> { call, ex ->
-            val status = when (ex.error) {
-                is ValidationError -> HttpStatusCode.BadRequest
-                is NotFoundError -> HttpStatusCode.NotFound
-                is AuthError -> HttpStatusCode.Unauthorized
-                is SystemError -> HttpStatusCode.InternalServerError
+        exception<AppException> { call, exception ->
+            val error = exception.error
+            logger.warn(exception) {
+                "Handled AppException [${error.code}] on ${call.request.path()}"
             }
 
-            logger.warn(ex) { "Handled AppException on ${call.request.path()}" }
+            val errorResponse = when (error) {
+                is ValidationError -> ValidationErrorResponse(
+                    code = error.code,
+                    message = error.message,
+                    fields = error.fieldErrors.associate { it.field to it.reason }
+                )
 
+                else -> ErrorResponse(
+                    code = error.code,
+                    message = error.message
+                )
+            }
+
+            call.respond(error.toHttpStatus(), errorResponse)
+        }
+
+        status(HttpStatusCode.NotFound) { call, _ ->
             call.respond(
-                status,
+                HttpStatusCode.NotFound,
                 ErrorResponse(
-                    status = status.value,
-                    error = status.description,
-                    code = ex.error.code,
-                    message = ex.error.message,
-                    path = call.request.path()
+                    code = NotFoundError.code,
+                    message = NotFoundError.message
                 )
             )
         }
@@ -46,11 +57,8 @@ fun Application.configureStatusPages() {
             call.respond(
                 HttpStatusCode.InternalServerError,
                 ErrorResponse(
-                    status = 500,
-                    error = "Internal Server Error",
-                    code = "INTERNAL_SERVER_ERROR",
-                    message = "An unexpected error has occured.",
-                    path = call.request.path()
+                    code = InternalServerError.code,
+                    message = InternalServerError.message
                 )
             )
         }

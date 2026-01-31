@@ -1,16 +1,6 @@
 package io.github.carlawarde.kotlinBackendDemo.infrastructure.errors
 
-sealed class SystemError(
-    code: String,
-    message: String
-)
+sealed class SystemError(val code: String, val message: String)
 
-object ExternalServiceFailure : SystemError(
-    "EXTERNAL_SERVICE_FAILURE",
-    "External service failed or timed out."
-)
-
-object UnexpectedError : SystemError(
-    "UNEXPECTED_ERROR",
-    "An unexpected error has occurred."
-)
+object InternalServerError : SystemError("INTERNAL_SERVER_ERROR", "An unexpected error has occurred")
+object NotFoundError : SystemError("NOT_FOUND", "Resource not found")
