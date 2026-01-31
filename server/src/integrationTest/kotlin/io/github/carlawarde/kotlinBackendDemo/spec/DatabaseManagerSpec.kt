@@ -12,7 +12,7 @@ class DatabaseManagerIntegrationSpec : IntegrationTestBase() {
 
         test("start initializes datasource and isConnected returns true") {
             testApplication {
-                buildTestApp(false) {  deps ->
+                buildTestApp {  deps ->
                     val dbManager = deps.databaseManager
                     dbManager.isConnected() shouldBe false
                     dbManager.start()
@@ -23,7 +23,7 @@ class DatabaseManagerIntegrationSpec : IntegrationTestBase() {
 
         test("start is idempotent") {
             testApplication {
-                buildTestApp(false) { deps ->
+                buildTestApp { deps ->
                     val dbManager = deps.databaseManager
                     dbManager.start()
                     dbManager.start()
@@ -35,7 +35,7 @@ class DatabaseManagerIntegrationSpec : IntegrationTestBase() {
 
         test("stop closes the datasource safely") {
             testApplication {
-                buildTestApp(false) { deps ->
+                buildTestApp { deps ->
                     val dbManager = deps.databaseManager
 
                     dbManager.start()
@@ -50,7 +50,7 @@ class DatabaseManagerIntegrationSpec : IntegrationTestBase() {
 
         test("start after stop is allowed") {
             testApplication {
-                buildTestApp(false) { deps ->
+                buildTestApp { deps ->
                     val dbManager = deps.databaseManager
 
                     dbManager.start()

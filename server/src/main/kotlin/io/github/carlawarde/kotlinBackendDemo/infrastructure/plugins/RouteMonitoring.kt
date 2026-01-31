@@ -2,6 +2,7 @@ package io.github.carlawarde.kotlinBackendDemo.infrastructure.plugins
 
 import io.github.carlawarde.kotlinBackendDemo.core.metrics.ApiMetrics
 import io.github.carlawarde.kotlinBackendDemo.core.metrics.ApiAction
+import io.github.carlawarde.kotlinBackendDemo.utils.HttpUtils.isFailedCall
 import io.ktor.server.application.*
 import io.ktor.server.application.hooks.CallFailed
 import io.ktor.server.request.path
@@ -24,29 +25,21 @@ val RouteMetricsPlugin = createApplicationPlugin(
 
     onCall { call ->
         if (call.request.path() !in ignoredPaths) {
-            call.attributes.put(startTimeKey, System.currentTimeMillis())
+            call.attributes.put(startTimeKey, System.nanoTime())
         }
     }
 
     onCallRespond { call ->
         if (call.request.path() in ignoredPaths) return@onCallRespond
-
         val startTime = call.attributes.getOrNull(startTimeKey) ?: return@onCallRespond
-        val durationMs = System.currentTimeMillis() - startTime
+        val action = call.attributes.getOrNull(actionKey) ?: return@onCallRespond
 
-        call.attributes.getOrNull(actionKey)?.let { action ->
-            ApiMetrics.recordSuccess(registry, action, durationMs)
-        }
-    }
+        val durationNs = System.nanoTime() - startTime
 
-    on(CallFailed) { call, cause ->
-        if (call.request.path() in ignoredPaths) return@on
-
-        val startTime = call.attributes.getOrNull(startTimeKey) ?: return@on
-        val durationMs = System.currentTimeMillis() - startTime
-
-        call.attributes.getOrNull(actionKey)?.let { action ->
-            ApiMetrics.recordFailure(registry, action,  durationMs)
+        if(isFailedCall(call)) {
+            ApiMetrics.recordFailure(registry, action, durationNs)
+        } else {
+            ApiMetrics.recordSuccess(registry, action, durationNs)
         }
     }
 }

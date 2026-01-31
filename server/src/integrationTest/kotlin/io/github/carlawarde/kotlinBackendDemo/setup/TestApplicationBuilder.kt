@@ -17,7 +17,7 @@ import io.micrometer.core.instrument.simple.SimpleMeterRegistry
 
 
 fun ApplicationTestBuilder.buildTestApp(
-    startDatabase: Boolean = true,
+    startDatabase: Boolean = false,
     configure: Application.(TestDeps) -> Unit
 ): HttpClient {
 

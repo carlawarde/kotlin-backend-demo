@@ -16,9 +16,9 @@ import io.ktor.server.testing.testApplication
 class AppInfoSpec : IntegrationTestBase() {
 
     init {
-        test("liveness is OK when db is up") {
+        test("liveness should be OK when db is up") {
             testApplication {
-                val client = buildTestApp { deps ->
+                val client = buildTestApp(startDatabase = true) { deps ->
                     routing {
                         appInfoRoutes(AppInfoService(deps.databaseManager))
                     }
@@ -29,9 +29,9 @@ class AppInfoSpec : IntegrationTestBase() {
             }
         }
 
-        test("readiness is OK when db is up") {
+        test("readiness should be OK when db is up") {
             testApplication {
-                val client = buildTestApp { deps ->
+                val client = buildTestApp(startDatabase = true) { deps ->
                     routing {
                         appInfoRoutes(AppInfoService(deps.databaseManager))
                     }
@@ -42,9 +42,9 @@ class AppInfoSpec : IntegrationTestBase() {
             }
         }
 
-        test("status is RUNNING when application is up") {
+        test("status should be RUNNING when application is up") {
             testApplication {
-                val client = buildTestApp { deps ->
+                val client = buildTestApp(startDatabase = true) { deps ->
                     val appInfoService = AppInfoService(deps.databaseManager)
                     appInfoService.setStatus(State.RUNNING)
                     routing {
