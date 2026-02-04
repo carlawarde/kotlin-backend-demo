@@ -9,19 +9,11 @@ abstract class IntegrationTestBase : FunSpec({
     install(JdbcDatabaseContainerProjectExtension(PostgresTestContainer.container))
 
     beforeSpec {
-        IntegrationTestConfig.initialize()
-    }
-
-    beforeTest {
-        // Example: databaseManager.truncateTables("users", "orders")
-    }
-
-    afterTest {
-        // Example: databaseManager.truncateTables("users", "orders")
+        IntegrationTestBaseConfig.applyToSystemProperties()
     }
 
     afterSpec {
-        IntegrationTestConfig.clear()
+        IntegrationTestBaseConfig.clearSystemProperties()
     }
 
 })

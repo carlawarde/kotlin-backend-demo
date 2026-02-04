@@ -1,10 +1,10 @@
 package io.github.carlawarde.kotlinBackendDemo.spec
 
 import io.github.carlawarde.kotlinBackendDemo.core.errors.AppException
-import io.github.carlawarde.kotlinBackendDemo.core.errors.Unauthorized
+import io.github.carlawarde.kotlinBackendDemo.core.errors.UnauthorizedError
+import io.github.carlawarde.kotlinBackendDemo.http.dto.ErrorResponse
 import io.github.carlawarde.kotlinBackendDemo.infrastructure.errors.InternalServerError
 import io.github.carlawarde.kotlinBackendDemo.infrastructure.errors.NotFoundError
-import io.github.carlawarde.kotlinBackendDemo.infrastructure.http.ErrorResponse
 import io.github.carlawarde.kotlinBackendDemo.setup.IntegrationTestBase
 import io.github.carlawarde.kotlinBackendDemo.setup.buildTestApp
 import io.kotest.matchers.shouldBe
@@ -25,7 +25,7 @@ class StatusPagesSpec : IntegrationTestBase() {
 
                     this.routing {
                         get("/test/app-error") {
-                            throw AppException(Unauthorized)
+                            throw AppException(UnauthorizedError)
                         }
                     }
                 }
@@ -34,8 +34,8 @@ class StatusPagesSpec : IntegrationTestBase() {
                 response.status shouldBe HttpStatusCode.Unauthorized
 
                 val body: ErrorResponse = response.body()
-                body.message shouldBe Unauthorized.message
-                body.code shouldBe Unauthorized.code
+                body.message shouldBe UnauthorizedError.message
+                body.code shouldBe UnauthorizedError.code
             }
         }
 

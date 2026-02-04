@@ -11,7 +11,10 @@ if [[ "${1:-}" == "down" ]]; then
 fi
 
 echo "Starting app and database with Docker Compose..."
-APP_VERSION="$APP_VERSION" docker-compose -f "$COMPOSE_FILE" up -d --build
+docker-compose -f "$COMPOSE_FILE" up -d --build --remove-orphans
 
+echo "App should be available at: http://localhost:${APP_PORT:-8080}"
 echo "Tailing logs (press Ctrl+C to stop)"
+
+trap "echo 'Stopping log tail'; exit" SIGINT
 docker-compose -f "$COMPOSE_FILE" logs -f

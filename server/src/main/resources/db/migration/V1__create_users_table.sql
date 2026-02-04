@@ -8,4 +8,5 @@ CREATE TABLE users (
 );
 
 CREATE INDEX idx_users_created_at ON users(created_at);
-CREATE UNIQUE INDEX users_email_unique ON users (LOWER(email));
+CREATE UNIQUE INDEX uidx_users_email ON users (LOWER(email));
+CREATE UNIQUE INDEX uidx_users_username ON users(LOWER(username))

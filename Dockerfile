@@ -2,29 +2,27 @@ FROM ubuntu:latest
 LABEL authors="carla.warde"
 
 # =========================
-# Build stage (Shadow JAR)
+# Build stage
 # =========================
 FROM gradle:9.3.0-jdk17 AS build
 
 WORKDIR /app
-
 COPY . .
 
-# Build the fat JAR using shadowJar
-ARG APP_VERSION=1.0.0-SNAPSHOT
-RUN gradle clean shadowJar -Pversion=$APP_VERSION --no-daemon --console=plain
+RUN gradle :server:installDist --no-daemon
 
 # =========================
 # Runtime stage
 # =========================
-FROM eclipse-temurin:17-jdk-alpine
-
+FROM eclipse-temurin:17-jre
 WORKDIR /app
 
-# Copy the fat JAR from build stage
-ARG APP_VERSION=1.0.0-SNAPSHOT
-COPY --from=build /app/server/build/libs/server-$APP_VERSION.jar app.jar
+COPY --from=build /app/server/build/install/kotlin-backend-demo /app/
+
+RUN chmod +x bin/kotlin-backend-demo
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENV JAVA_OPTS=""
+
+ENTRYPOINT ["sh", "-c", "./bin/kotlin-backend-demo $JAVA_OPTS"]

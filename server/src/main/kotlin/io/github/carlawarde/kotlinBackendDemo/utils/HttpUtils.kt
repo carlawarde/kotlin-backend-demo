@@ -1,6 +1,6 @@
 package io.github.carlawarde.kotlinBackendDemo.utils
 
-import io.github.carlawarde.kotlinBackendDemo.core.errors.AppError
+import io.github.carlawarde.kotlinBackendDemo.core.errors.CoreError
 import io.github.carlawarde.kotlinBackendDemo.core.errors.ForbiddenError
 import io.github.carlawarde.kotlinBackendDemo.core.errors.UnauthorizedError
 import io.github.carlawarde.kotlinBackendDemo.core.errors.ValidationError
@@ -16,7 +16,7 @@ object HttpUtils {
         return false
     }
 
-    fun AppError.toHttpStatus(): HttpStatusCode =
+    fun CoreError.toHttpStatus(): HttpStatusCode =
         when (this) {
             is UnauthorizedError -> HttpStatusCode.Unauthorized
             is ForbiddenError -> HttpStatusCode.Forbidden

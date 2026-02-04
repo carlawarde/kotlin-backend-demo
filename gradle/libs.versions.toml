@@ -4,17 +4,17 @@
 [versions]
 kotlin = "2.1.0"
 ktor = "3.2.0"
+kotlinx = "1.10.2"
 logback = "1.5.22"
-koin = "3.5.6"
+koin = "4.1.0"
 exposed = "1.0.0-rc-4"
 hikari = "7.0.2"
 flyway = "11.20.0"
-postgres = "42.7.1"
+postgres = "42.7.9"
 testcontainers = "2.0.3"
 kotest = "6.0.1"
 mockk = "1.14.7"
 micrometer = "1.12.8"
-shadow = "9.0.0"
 kotlin-logging = "3.0.5"
 bcrypt = "0.10.2"
 
@@ -37,15 +37,17 @@ typesafe-config = { module = "com.typesafe:config", version = "typesafe" }
 # --- Logging ---
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 kotlin-logging = { module = "io.github.microutils:kotlin-logging", version.ref = "kotlin-logging" }
+kotlinx-coroutines-slf4j = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-slf4j", version.ref = "kotlinx" }
 
 # --- Observability ---
 micrometer-core = { module = "io.micrometer:micrometer-core", version.ref = "micrometer" }
 micrometer-registry-prometheus = { module = "io.micrometer:micrometer-registry-prometheus", version.ref= "micrometer" }
 
 # --- Koin ---
-koin-ktor = { module = "io.insert-koin:koin-ktor", version.ref= "koin" }
+koin-core = { module = "io.insert-koin:koin-core", version.ref= "koin" }
 koin-logger = { module = "io.insert-koin:koin-logger-slf4j", version.ref = "koin" }
 koin-test = { module = "io.insert-koin:koin-test", version.ref = "koin" }
+koin-ktor3 = { module = "io.insert-koin:koin-ktor3", version = "4.1.0-Beta8" }
 
 # --- Database (Exposed) ---
 exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
@@ -75,14 +77,12 @@ testcontainers-jdbc = { module = "org.testcontainers:testcontainers-jdbc", versi
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
-shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
 
 [bundles]
 ktor-server = ["ktor-server-core", "ktor-server-netty", "ktor-server-content-negotiation", "ktor-serialization-json", "ktor-server-metrics", "ktor-server-test-host", "ktor-server-status-pages", "ktor-server-call-id"]
-logging = ["logback-classic", "kotlin-logging"]
+logging = ["logback-classic", "kotlin-logging", "kotlinx-coroutines-slf4j"]
 observability = ["micrometer-core", "micrometer-registry-prometheus"]
-koin = ["koin-ktor", "koin-logger", "koin-test"]
+koin = ["koin-core", "koin-logger", "koin-test", "koin-ktor3"]
 exposed = ["exposed-core", "exposed-dao", "exposed-jdbc", "exposed-date-time"]
 db-infra = ["hikari", "flyway-core", "flyway-postgres", "postgres-driver"]
 testing-common = ["kotest-runner", "kotest-property", "kotest-assertions-core", "kotest-assertions-ktor", "mockk"]

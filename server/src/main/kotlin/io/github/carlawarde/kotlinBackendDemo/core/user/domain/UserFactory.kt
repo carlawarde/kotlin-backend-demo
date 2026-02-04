@@ -7,14 +7,19 @@ import kotlin.time.ExperimentalTime
 
 @OptIn(ExperimentalTime::class)
 object UserFactory {
-    fun fromDTO(dto: CreateUserRequest, hashPassword: (String) -> String): User {
+    fun fromDTO(
+        dto: CreateUserRequest,
+        hashPassword: (String) -> String,
+        clock: Clock.System = Clock.System
+    ): User {
+        val now = clock.now()
         return User(
             id = UUID.randomUUID(),
             username = dto.username,
             email = dto.email.lowercase(),
             passwordHash = hashPassword(dto.password),
-            createdAt = Clock.System.now(),
-            updatedAt = Clock.System.now()
+            createdAt = now,
+            updatedAt = now
         )
     }
 }

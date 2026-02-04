@@ -1,16 +1,17 @@
 package io.github.carlawarde.kotlinBackendDemo.core.di
 
 import io.github.carlawarde.kotlinBackendDemo.core.user.repository.UserRepository
+import io.github.carlawarde.kotlinBackendDemo.core.user.repository.UserRepositoryImpl
 import io.github.carlawarde.kotlinBackendDemo.core.user.service.UserService
-import io.github.carlawarde.kotlinBackendDemo.infrastructure.db.DatabaseManager
+import org.jetbrains.exposed.v1.jdbc.Database
 import org.koin.dsl.module
 
 val userModule = module {
-    single { UserRepository() }
+    single<UserRepository> { UserRepositoryImpl(get()) }
     single { UserService(get()) }
 }
 
-fun coreModule(database: DatabaseManager) = module {
+fun coreModule(database: Database) = module {
     single { database }
 
     includes(userModule)

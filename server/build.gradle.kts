@@ -1,4 +1,3 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.gradle.kotlin.dsl.invoke
 
@@ -13,10 +12,8 @@ plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.ktor)
     // Apply the application plugin to add support for building a CLI application in Java.
     application
-    alias(libs.plugins.shadow)
 }
 
 group = "io.github.carlawarde"
@@ -53,7 +50,7 @@ kotlin {
 
 application {
     // Define the main class for the application.
-    mainClass = "io.github.carlawarde.kotlinBackendDemo.ApplicationKt"
+    mainClass.set("io.github.carlawarde.kotlinBackendDemo.ApplicationKt")
     applicationName = "kotlin-backend-demo"
 }
 
@@ -67,7 +64,7 @@ testing {
             useJUnitJupiter()
 
             dependencies {
-                implementation(files(tasks.named<ShadowJar>("shadowJar").get().archiveFile))
+                implementation(project())
 
                 implementation(libs.kotest.runner)
                 implementation(libs.kotest.assertions.core)
@@ -93,9 +90,14 @@ testing {
                 implementation(libs.ktor.client.cio)
                 implementation(libs.ktor.client.content.negotiation)
 
-                implementation(libs.koin.ktor)
+                implementation(libs.koin.core)
                 implementation(libs.koin.test)
                 implementation(libs.koin.logger)
+
+                implementation(libs.exposed.jdbc)
+                implementation(libs.exposed.core)
+                implementation(libs.exposed.dao)
+                implementation(libs.exposed.date.time)
 
             }
         }
@@ -120,22 +122,8 @@ tasks.check {
 }
 
 tasks.named<Test>("integrationTest") {
-    dependsOn("shadowJar")
-    shouldRunAfter(tasks.named("test"))
+    shouldRunAfter(tasks.named<Test>("test"))
 }
-
-tasks.withType<ShadowJar> {
-    archiveClassifier.set("")
-    archiveVersion.set(project.version.toString())
-    archiveFileName.set("${archiveBaseName.get()}-${archiveVersion.get()}.jar")
-}
-
-tasks.named<Jar>("jar") { enabled = false }
-tasks.named("startScripts") { enabled = false }
-tasks.named("installDist") { enabled = false }
-tasks.named("distZip") { enabled = false }
-tasks.named("distTar") { enabled = false }
-
 
 
 

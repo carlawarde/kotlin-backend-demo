@@ -1,9 +1,7 @@
 services:
   db:
-    image: postgres:15-alpine
+    image: postgres:16-alpine
     container_name: kotlin_demo_db
-    ports:
-      - ${DB_PORT}:5432
     env_file:
       - .env
     environment:
@@ -22,6 +20,7 @@ services:
     image: kotlin-backend-demo:${APP_VERSION:-1.0.0-SNAPSHOT}
     container_name: kotlin_backend_app
     stop_grace_period: 20s
+    restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
@@ -29,6 +28,13 @@ services:
       - ${APP_PORT}:8080
     env_file:
       - .env
+    environment:
+      JAVA_OPTS: "-Xms256m -Xmx512m"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/health/live"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
 
 volumes:
   postgres_data:
