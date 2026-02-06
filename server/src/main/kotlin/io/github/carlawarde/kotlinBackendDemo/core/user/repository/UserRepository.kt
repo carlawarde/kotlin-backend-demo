@@ -8,13 +8,17 @@ import io.github.carlawarde.kotlinBackendDemo.core.db.Users.passwordHash
 import io.github.carlawarde.kotlinBackendDemo.core.db.Users.updatedAt
 import io.github.carlawarde.kotlinBackendDemo.core.db.Users.username
 import io.github.carlawarde.kotlinBackendDemo.core.db.dbQuery
+import io.github.carlawarde.kotlinBackendDemo.core.errors.DomainException
+import io.github.carlawarde.kotlinBackendDemo.core.errors.UserDomainError
 import io.github.carlawarde.kotlinBackendDemo.core.user.domain.User
 import mu.KotlinLogging
 import org.jetbrains.exposed.v1.core.ResultRow
 import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.exceptions.ExposedSQLException
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.selectAll
+import org.postgresql.util.PSQLException
 import java.util.UUID
 import kotlin.text.lowercase
 import kotlin.time.ExperimentalTime
@@ -32,22 +36,37 @@ class UserRepositoryImpl(val db: Database) : UserRepository {
     override suspend fun create(user: User): User {
         logger.info { "Inserting new user into database" }
 
-        return dbQuery(db, logger) {
-            val row = Users.insert {
+        return dbQuery(db) {
+            try {
+                val row = Users.insert {
                     it[id] = user.id
                     it[username] = user.username
                     it[email] = user.email
                     it[passwordHash] = user.passwordHash
                 }.resultedValues!!.first()
 
-            toUser(row)
+                toUser(row)
+
+            } catch (e: ExposedSQLException) {
+                // PostgreSQL unique constraint violation code = 23505
+                if (e.cause is PSQLException && (e.cause as PSQLException).sqlState == "23505") {
+                    val constraintName = (e.cause as PSQLException).serverErrorMessage?.constraint
+                    when (constraintName) {
+                        "ux_users_email" -> throw DomainException(UserDomainError.EmailAlreadyTakenError)
+                        "ux_users_username" -> throw DomainException(UserDomainError.UsernameAlreadyTakenError)
+                        else -> throw e
+                    }
+                } else {
+                    throw e
+                }
+            }
         }
     }
 
     override suspend fun findByEmail(email: String): User? {
         logger.info { "Getting user by email" }
 
-        return dbQuery(db, logger) {
+        return dbQuery(db) {
             Users
                 .selectAll()
                 .where { Users.email eq email.lowercase() }
@@ -59,7 +78,7 @@ class UserRepositoryImpl(val db: Database) : UserRepository {
     override suspend fun findById(id: UUID): User? {
         logger.info { "Getting user by id: $id" }
 
-        return dbQuery(db, logger) {
+        return dbQuery(db) {
             Users
                 .selectAll()
                 .where(Users.id eq(id))

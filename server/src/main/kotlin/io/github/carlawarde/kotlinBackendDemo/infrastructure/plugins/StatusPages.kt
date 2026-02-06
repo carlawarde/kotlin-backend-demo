@@ -19,14 +19,14 @@ fun Application.configureStatusPages() {
 
     install(StatusPages) {
 
-        exception<AppException> { call, exception ->
+        exception<RequestException> { call, exception ->
             val error = exception.error
             logger.warn(exception) {
                 "Handled AppException [${error.code}] on ${call.request.path()}"
             }
 
             val errorResponse = when (error) {
-                is ValidationError -> ValidationErrorResponse(
+                is RequestValidationError -> ValidationErrorResponse(
                     code = error.code,
                     message = error.message,
                     fields = error.fieldErrors.associate { it.field to it.reason }

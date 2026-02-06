@@ -1,9 +1,8 @@
 package io.github.carlawarde.kotlinBackendDemo.utils
 
-import io.github.carlawarde.kotlinBackendDemo.core.errors.CoreError
-import io.github.carlawarde.kotlinBackendDemo.core.errors.ForbiddenError
-import io.github.carlawarde.kotlinBackendDemo.core.errors.UnauthorizedError
-import io.github.carlawarde.kotlinBackendDemo.core.errors.ValidationError
+import io.github.carlawarde.kotlinBackendDemo.core.errors.AuthError
+import io.github.carlawarde.kotlinBackendDemo.core.errors.RequestError
+import io.github.carlawarde.kotlinBackendDemo.core.errors.RequestValidationError
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 
@@ -16,10 +15,10 @@ object HttpUtils {
         return false
     }
 
-    fun CoreError.toHttpStatus(): HttpStatusCode =
+    fun RequestError.toHttpStatus(): HttpStatusCode =
         when (this) {
-            is UnauthorizedError -> HttpStatusCode.Unauthorized
-            is ForbiddenError -> HttpStatusCode.Forbidden
-            is ValidationError -> HttpStatusCode.BadRequest
+            is AuthError.UnauthorizedError -> HttpStatusCode.Unauthorized
+            is AuthError.ForbiddenError -> HttpStatusCode.Forbidden
+            is RequestValidationError -> HttpStatusCode.BadRequest
         }
 }

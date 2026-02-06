@@ -1,6 +1,6 @@
 package io.github.carlawarde.kotlinBackendDemo.spec
 
-import io.github.carlawarde.kotlinBackendDemo.core.errors.AppException
+import io.github.carlawarde.kotlinBackendDemo.core.errors.RequestException
 import io.github.carlawarde.kotlinBackendDemo.core.errors.UnauthorizedError
 import io.github.carlawarde.kotlinBackendDemo.http.dto.ErrorResponse
 import io.github.carlawarde.kotlinBackendDemo.infrastructure.errors.InternalServerError
@@ -25,7 +25,7 @@ class StatusPagesSpec : IntegrationTestBase() {
 
                     this.routing {
                         get("/test/app-error") {
-                            throw AppException(UnauthorizedError)
+                            throw RequestException(UnauthorizedError)
                         }
                     }
                 }
