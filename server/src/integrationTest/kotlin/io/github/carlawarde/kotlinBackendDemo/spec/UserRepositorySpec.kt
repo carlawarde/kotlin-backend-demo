@@ -3,6 +3,7 @@
 package io.github.carlawarde.kotlinBackendDemo.spec
 
 import io.github.carlawarde.kotlinBackendDemo.core.db.Users
+import io.github.carlawarde.kotlinBackendDemo.core.user.domain.User
 import io.github.carlawarde.kotlinBackendDemo.core.user.domain.UserFactory
 import io.github.carlawarde.kotlinBackendDemo.core.user.dto.CreateUserRequest
 import io.github.carlawarde.kotlinBackendDemo.core.user.repository.UserRepository
@@ -17,6 +18,8 @@ import io.micrometer.core.instrument.simple.SimpleMeterRegistry
 import org.jetbrains.exposed.v1.jdbc.SchemaUtils
 import org.jetbrains.exposed.v1.jdbc.deleteAll
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
+import java.util.UUID
+import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 class UserRepositoryIntegrationTest : IntegrationTestBase() {
@@ -48,29 +51,37 @@ class UserRepositoryIntegrationTest : IntegrationTestBase() {
             }
         }
 
-        test("create should create a new user successfully") {
-            val user = UserFactory.fromDTO(
-                dto = CreateUserRequest("john_doe", "john@example.com", "password123"),
-                hashPassword = { it }
+        fun generateUser(userName: String, email: String): User {
+            val now = Clock.System.now()
+            return User(
+                UUID.randomUUID(),
+                userName,
+                "test_pwd",
+                email,
+                now,
+                now
             )
+        }
+
+        test("create should create a new user successfully") {
+            val user = generateUser("John321", "john321@test.com")
 
             val created = repository.create(user)
 
             created.id shouldBe user.id
-            created.username shouldBe "john_doe"
-            created.email shouldBe "john@example.com"
+            created.username shouldBe user.username
+            created.email shouldBe user.email
         }
 
         test("find existing user by email should return user") {
-            val user = UserFactory.fromDTO(
-                dto = CreateUserRequest("jane_doe", "jane@example.com", "secret"),
-                hashPassword = { it }
-            )
+            val email = "jane@example.com"
+            val userName = "jane_doe"
+            val user = generateUser(userName, email)
             repository.create(user)
 
-            val found = repository.findByEmail("jane@example.com")
+            val found = repository.findByEmail(email)
             found.shouldNotBeNull()
-            found.username shouldBe "jane_doe"
+            found.username shouldBe user.username
         }
 
         test("find non-existing user by email should return null") {

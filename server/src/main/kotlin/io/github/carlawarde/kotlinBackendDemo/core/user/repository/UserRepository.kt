@@ -1,5 +1,6 @@
 package io.github.carlawarde.kotlinBackendDemo.core.user.repository
 
+import io.github.carlawarde.kotlinBackendDemo.common.errors.AppException
 import io.github.carlawarde.kotlinBackendDemo.core.db.Users
 import io.github.carlawarde.kotlinBackendDemo.core.db.Users.createdAt
 import io.github.carlawarde.kotlinBackendDemo.core.db.Users.email
@@ -8,7 +9,6 @@ import io.github.carlawarde.kotlinBackendDemo.core.db.Users.passwordHash
 import io.github.carlawarde.kotlinBackendDemo.core.db.Users.updatedAt
 import io.github.carlawarde.kotlinBackendDemo.core.db.Users.username
 import io.github.carlawarde.kotlinBackendDemo.core.db.dbQuery
-import io.github.carlawarde.kotlinBackendDemo.core.errors.DomainException
 import io.github.carlawarde.kotlinBackendDemo.core.errors.UserDomainError
 import io.github.carlawarde.kotlinBackendDemo.core.user.domain.User
 import mu.KotlinLogging
@@ -52,8 +52,16 @@ class UserRepositoryImpl(val db: Database) : UserRepository {
                 if (e.cause is PSQLException && (e.cause as PSQLException).sqlState == "23505") {
                     val constraintName = (e.cause as PSQLException).serverErrorMessage?.constraint
                     when (constraintName) {
-                        "ux_users_email" -> throw DomainException(UserDomainError.EmailAlreadyTakenError)
-                        "ux_users_username" -> throw DomainException(UserDomainError.UsernameAlreadyTakenError)
+                        "uidx_users_username" -> {
+                            val error = UserDomainError.UsernameAlreadyTakenError
+                            logger.warn { error.logMessage }
+                            throw AppException(error)
+                        }
+                        "uidx_users_email" -> {
+                            val error = UserDomainError.EmailAlreadyTakenError
+                            logger.warn { error.logMessage }
+                            throw AppException(error)
+                        }
                         else -> throw e
                     }
                 } else {

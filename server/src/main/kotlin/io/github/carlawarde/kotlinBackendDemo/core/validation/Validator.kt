@@ -1,10 +1,11 @@
 package io.github.carlawarde.kotlinBackendDemo.core.validation
 
-import io.github.carlawarde.kotlinBackendDemo.core.errors.DomainException
+import io.github.carlawarde.kotlinBackendDemo.common.errors.AppException
 import io.github.carlawarde.kotlinBackendDemo.core.errors.ValidationError
+import mu.KotlinLogging
 
-class Validator<T> {
-
+class Validator<T>(private val targetName: String? = null) {
+    private val logger = KotlinLogging.logger {}
     private val rules = mutableListOf<(T) -> String?>()
 
     fun rule(block: (T) -> String?) {
@@ -14,7 +15,10 @@ class Validator<T> {
     fun validate(target: T) {
         val errors = rules.mapNotNull { it(target) }
         if (errors.isNotEmpty()) {
-            throw DomainException(ValidationError(errors))
+            val nameForLog = targetName ?: target!!::class.simpleName ?: "UnknownTarget"
+            val validationError = ValidationError(nameForLog, errors)
+            logger.warn { validationError.logMessage }
+            throw AppException(validationError)
         }
     }
 }
