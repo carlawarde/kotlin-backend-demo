@@ -10,7 +10,7 @@ import kotlin.time.ExperimentalTime
 class UserService(private val userRepository: UserRepository) {
 
     suspend fun registerUser(userRequest: CreateUserRequest): User {
-        val user = UserFactory.fromDTO(userRequest, { hashPassword(it) })
+        val user = UserFactory.fromCreateRequestDto(userRequest, { hashPassword(it) })
         return userRepository.create(user)
     }
 

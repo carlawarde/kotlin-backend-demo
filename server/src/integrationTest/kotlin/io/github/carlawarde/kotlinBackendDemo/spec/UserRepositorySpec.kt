@@ -4,8 +4,6 @@ package io.github.carlawarde.kotlinBackendDemo.spec
 
 import io.github.carlawarde.kotlinBackendDemo.core.db.Users
 import io.github.carlawarde.kotlinBackendDemo.core.user.domain.User
-import io.github.carlawarde.kotlinBackendDemo.core.user.domain.UserFactory
-import io.github.carlawarde.kotlinBackendDemo.core.user.dto.CreateUserRequest
 import io.github.carlawarde.kotlinBackendDemo.core.user.repository.UserRepository
 import io.github.carlawarde.kotlinBackendDemo.core.user.repository.UserRepositoryImpl
 import io.github.carlawarde.kotlinBackendDemo.infrastructure.db.DatabaseManager
@@ -52,14 +50,11 @@ class UserRepositoryIntegrationTest : IntegrationTestBase() {
         }
 
         fun generateUser(userName: String, email: String): User {
-            val now = Clock.System.now()
             return User(
                 UUID.randomUUID(),
                 userName,
                 "test_pwd",
-                email,
-                now,
-                now
+                email
             )
         }
 

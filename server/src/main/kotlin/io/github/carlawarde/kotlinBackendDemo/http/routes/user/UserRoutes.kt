@@ -1,7 +1,7 @@
 package io.github.carlawarde.kotlinBackendDemo.http.routes.user
 
+import io.github.carlawarde.kotlinBackendDemo.core.user.domain.UserFactory
 import io.github.carlawarde.kotlinBackendDemo.core.user.dto.CreateUserRequest
-import io.github.carlawarde.kotlinBackendDemo.core.user.dto.UserResponse
 import io.github.carlawarde.kotlinBackendDemo.core.user.service.UserService
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
@@ -14,9 +14,10 @@ import kotlin.time.ExperimentalTime
 fun Route.userRoutes(userService: UserService) {
 
     post("/register") {
-        val userRequestDTO = call.receive<CreateUserRequest>()
-        val createdUser = userService.registerUser(userRequestDTO)
-        call.respond(HttpStatusCode.Created, UserResponse(createdUser))
+        val userRequestDto = call.receive<CreateUserRequest>()
+        val createdUser = userService.registerUser(userRequestDto)
+        val userResponseDto = UserFactory.toCreateUserResponseDto(createdUser)
+        call.respond(HttpStatusCode.Created, userResponseDto)
     }
 
     post("/login") {

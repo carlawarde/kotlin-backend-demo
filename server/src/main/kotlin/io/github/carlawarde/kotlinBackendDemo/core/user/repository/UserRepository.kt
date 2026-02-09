@@ -2,11 +2,9 @@ package io.github.carlawarde.kotlinBackendDemo.core.user.repository
 
 import io.github.carlawarde.kotlinBackendDemo.common.errors.AppException
 import io.github.carlawarde.kotlinBackendDemo.core.db.Users
-import io.github.carlawarde.kotlinBackendDemo.core.db.Users.createdAt
 import io.github.carlawarde.kotlinBackendDemo.core.db.Users.email
 import io.github.carlawarde.kotlinBackendDemo.core.db.Users.id
 import io.github.carlawarde.kotlinBackendDemo.core.db.Users.passwordHash
-import io.github.carlawarde.kotlinBackendDemo.core.db.Users.updatedAt
 import io.github.carlawarde.kotlinBackendDemo.core.db.Users.username
 import io.github.carlawarde.kotlinBackendDemo.core.db.dbQuery
 import io.github.carlawarde.kotlinBackendDemo.core.errors.UserDomainError
@@ -38,14 +36,18 @@ class UserRepositoryImpl(val db: Database) : UserRepository {
 
         return dbQuery(db) {
             try {
-                val row = Users.insert {
+                Users.insert {
                     it[id] = user.id
                     it[username] = user.username
                     it[email] = user.email
                     it[passwordHash] = user.passwordHash
-                }.resultedValues!!.first()
+                }
 
-                toUser(row)
+                Users
+                    .selectAll()
+                    .where { id eq user.id }
+                    .single()
+                    .let(::toUser)
 
             } catch (e: ExposedSQLException) {
                 // PostgreSQL unique constraint violation code = 23505
@@ -100,9 +102,7 @@ class UserRepositoryImpl(val db: Database) : UserRepository {
             id = row[id].value,
             username = row[username],
             email = row[email],
-            passwordHash = row[passwordHash],
-            createdAt = row[createdAt],
-            updatedAt = row[updatedAt]
+            passwordHash = row[passwordHash]
         )
     }
 }

@@ -22,3 +22,5 @@ class Validator<T>(private val targetName: String? = null) {
         }
     }
 }
+
+class Validation(val field: String, val message: String)
