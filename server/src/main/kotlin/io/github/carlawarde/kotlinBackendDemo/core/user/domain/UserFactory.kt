@@ -1,15 +1,13 @@
 package io.github.carlawarde.kotlinBackendDemo.core.user.domain
 
-import io.github.carlawarde.kotlinBackendDemo.core.user.dto.CreateUserResponse
-import kotlin.time.ExperimentalTime
+import io.github.carlawarde.kotlinBackendDemo.core.user.dto.PostRegisterUserResponse
 
-@OptIn(ExperimentalTime::class)
 object UserFactory {
 
-    fun toCreateUserResponseDto(
+    fun toPostRegisterUserResponse(
         user: User
-    ): CreateUserResponse {
-        return CreateUserResponse(
+    ): PostRegisterUserResponse {
+        return PostRegisterUserResponse(
             id = user.id.toString(),
             username = user.username,
             email = user.email

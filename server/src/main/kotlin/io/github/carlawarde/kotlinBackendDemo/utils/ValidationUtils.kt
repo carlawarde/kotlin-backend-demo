@@ -8,10 +8,10 @@ import io.konform.validation.path.ValidationPath
 
 object ValidationUtils {
 
-    fun createValidationError(userMessage: String, errors: List<ValidationError>): RequestValidationError {
+    fun createValidationError(errors: List<ValidationError>): RequestValidationError {
         val fieldErrors = mapKonformErrorsToFieldValidationError(errors)
         return RequestValidationError(
-            userMessage = userMessage,
+            userMessage = "User input did not meet requirements. Please resolve the following issues to proceed.",
             fieldErrors = fieldErrors
         )
     }
@@ -20,12 +20,8 @@ object ValidationUtils {
         val uniquePaths = errors.map{ it.path }.toSet()
 
         return uniquePaths.fold(listOf()) { acc, path ->
-            val errors = errors.messagesAtPath(path)
-            acc + FieldValidationError(getFieldFromKonformPath(path), errors)
+            val messages = errors.messagesAtPath(path)
+            acc + FieldValidationError(path.dataPath, messages)
         }
-    }
-
-    private fun getFieldFromKonformPath(path: ValidationPath): String {
-        return path.dataPath.replace(".", "")
     }
 }
