@@ -6,19 +6,24 @@ import io.github.carlawarde.kotlinBackendDemo.infrastructure.config.DatabaseConf
 import io.micrometer.core.instrument.MeterRegistry
 import mu.KotlinLogging
 import org.flywaydb.core.Flyway
+import org.flywaydb.core.api.FlywayException
 import org.jetbrains.exposed.v1.jdbc.Database
 
 class DatabaseManager(private val config: DatabaseConfig, private val meterRegistry: MeterRegistry) {
     private val logger = KotlinLogging.logger {}
     private var dataSource: HikariDataSource? = null
+    private var database: Database? = null
+
+    val db: Database
+        get() = database ?: error("Database not initialized. Call start() before using db.")
 
     fun start() {
         if (dataSource != null) {
             logger.info("DataSource already started, skipping initialization...")
         } else {
             dataSource = createDataSource()
-            //runFlyway(datasource)
-            Database.connect(dataSource!!)
+            runFlyway(dataSource!!)
+            database = Database.connect(dataSource!!)
         }
     }
 
@@ -65,7 +70,13 @@ class DatabaseManager(private val config: DatabaseConfig, private val meterRegis
 
     private fun runFlyway(dataSource: HikariDataSource) {
         logger.info("Starting Flyway migration...")
-        val flyway = Flyway.configure().dataSource(dataSource).load()
-        flyway.migrate()
+        try {
+            val flyway = Flyway.configure()
+                .dataSource(dataSource)
+                .load()
+            flyway.migrate()
+        } catch (e: FlywayException) {
+            logger.error("Failed to migrate database", e)
+        }
     }
 }

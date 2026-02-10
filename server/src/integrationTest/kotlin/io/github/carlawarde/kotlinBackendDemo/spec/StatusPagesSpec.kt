@@ -1,10 +1,9 @@
 package io.github.carlawarde.kotlinBackendDemo.spec
 
-import io.github.carlawarde.kotlinBackendDemo.core.errors.AppException
-import io.github.carlawarde.kotlinBackendDemo.core.errors.Unauthorized
-import io.github.carlawarde.kotlinBackendDemo.infrastructure.errors.InternalServerError
-import io.github.carlawarde.kotlinBackendDemo.infrastructure.errors.NotFoundError
-import io.github.carlawarde.kotlinBackendDemo.infrastructure.http.ErrorResponse
+import io.github.carlawarde.kotlinBackendDemo.common.errors.AppException
+import io.github.carlawarde.kotlinBackendDemo.http.dto.ErrorResponse
+import io.github.carlawarde.kotlinBackendDemo.http.errors.AuthError
+import io.github.carlawarde.kotlinBackendDemo.infrastructure.errors.SystemError
 import io.github.carlawarde.kotlinBackendDemo.setup.IntegrationTestBase
 import io.github.carlawarde.kotlinBackendDemo.setup.buildTestApp
 import io.kotest.matchers.shouldBe
@@ -25,17 +24,17 @@ class StatusPagesSpec : IntegrationTestBase() {
 
                     this.routing {
                         get("/test/app-error") {
-                            throw AppException(Unauthorized)
+                            throw AppException(AuthError.UnauthorizedError)
                         }
                     }
                 }
 
                 val response = client.get("/test/app-error")
-                response.status shouldBe HttpStatusCode.Unauthorized
+                response.status shouldBe AuthError.UnauthorizedError.statusCode
 
                 val body: ErrorResponse = response.body()
-                body.message shouldBe Unauthorized.message
-                body.code shouldBe Unauthorized.code
+                body.message shouldBe AuthError.UnauthorizedError.userMessage
+                body.internalCode shouldBe AuthError.UnauthorizedError.internalCode
             }
         }
 
@@ -47,8 +46,8 @@ class StatusPagesSpec : IntegrationTestBase() {
                 response.status shouldBe HttpStatusCode.NotFound
 
                 val body: ErrorResponse = response.body() as ErrorResponse
-                body.message shouldBe NotFoundError.message
-                body.code shouldBe NotFoundError.code
+                body.message shouldBe SystemError.NotFoundError.userMessage
+                body.internalCode shouldBe SystemError.NotFoundError.internalCode
             }
         }
 
@@ -66,8 +65,8 @@ class StatusPagesSpec : IntegrationTestBase() {
                 response.status shouldBe HttpStatusCode.InternalServerError
 
                 val body: ErrorResponse = response.body()
-                body.message shouldBe InternalServerError.message
-                body.code shouldBe InternalServerError.code
+                body.message shouldBe SystemError.InternalServerError.userMessage
+                body.internalCode shouldBe SystemError.InternalServerError.internalCode
             }
         }
     }

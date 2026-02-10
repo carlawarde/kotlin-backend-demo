@@ -2,7 +2,7 @@ package io.github.carlawarde.kotlinBackendDemo.infrastructure.plugins
 
 import io.github.carlawarde.kotlinBackendDemo.core.metrics.ApiMetrics
 import io.github.carlawarde.kotlinBackendDemo.core.metrics.ApiAction
-import io.github.carlawarde.kotlinBackendDemo.utils.HttpUtils.isFailedCall
+import io.github.carlawarde.kotlinBackendDemo.http.util.HttpUtils.isFailedCall
 import io.ktor.server.application.*
 import io.ktor.server.application.hooks.CallFailed
 import io.ktor.server.request.path

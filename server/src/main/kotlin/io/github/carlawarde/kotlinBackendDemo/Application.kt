@@ -24,12 +24,12 @@ fun Application.module() {
 
     logger.info("Configuring plugins...")
     val registry = configureMonitoring(appConfig.metrics)
-    val database = configureDatabase(appConfig.database, registry)
-    configureDependencyInjection(database)
+    val databaseManager = configureDatabase(appConfig.database, registry)
+    configureDependencyInjection(databaseManager.db)
     configureSerialization()
     configureStatusPages()
 
-    val appInfoService = AppInfoService(database)
+    val appInfoService = AppInfoService(databaseManager)
     HealthMetrics.build(registry, appInfoService)
     ApiMetrics.build(registry)
 
@@ -44,7 +44,7 @@ fun Application.module() {
 
     this.monitor.subscribe(ApplicationStopped) {
         logger.info("Releasing application resources...")
-        database.stop()
+        databaseManager.stop()
         val loggerContext = LoggerFactory.getILoggerFactory() as LoggerContext
         loggerContext.stop()
         appInfoService.setStatus(State.STOPPED)
