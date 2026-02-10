@@ -8,6 +8,6 @@ sealed class SystemError(
     logMessage: String
 ): AppError(internalCode, userMessage, logMessage) {
     object InternalServerError : SystemError("SYS_001", "An unexpected error has occurred.", "InternalServerError has occurred.")
-    object NotFoundError : SystemError("SYS_001", "Resource not found.", "NotFoundError has occurred.")
+    object NotFoundError : SystemError("SYS_002", "Resource not found.", "NotFoundError has occurred.")
 }
 

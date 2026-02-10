@@ -11,6 +11,7 @@ import io.github.carlawarde.kotlinBackendDemo.infrastructure.errors.SystemError
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
+import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.request.path
 import io.ktor.server.response.respond
@@ -47,6 +48,19 @@ fun Application.configureStatusPages() {
             call.respond(
                 status = status,
                 message = error.toResponse()
+            )
+        }
+
+        exception<BadRequestException> { call, cause ->
+            logger.warn(cause) {
+                "Request transformation failed on ${call.request.path()}"
+            }
+
+            val error = HttpError.InvalidRequestBody
+
+            call.respond(
+                error.statusCode,
+                error.toResponse()
             )
         }
 

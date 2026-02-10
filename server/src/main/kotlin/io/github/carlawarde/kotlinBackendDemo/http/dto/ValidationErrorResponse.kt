@@ -3,7 +3,8 @@ package io.github.carlawarde.kotlinBackendDemo.http.dto
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ErrorResponse(
+data class ValidationErrorResponse(
     val internalCode: String,
-    val message: String
+    val message: String,
+    val fields: Map<String, List<String>>
 )

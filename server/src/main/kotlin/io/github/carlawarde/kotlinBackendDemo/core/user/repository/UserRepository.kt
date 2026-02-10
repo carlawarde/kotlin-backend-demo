@@ -60,12 +60,12 @@ class UserRepositoryImpl(val db: Database) : UserRepository {
                     val constraintName = (e.cause as PSQLException).serverErrorMessage?.constraint
                     when (constraintName) {
                         "uidx_users_username" -> {
-                            val error = UserDomainError.UsernameAlreadyTakenError
+                            val error = UserDomainError.UsernameAlreadyTaken
                             logger.warn { error.logMessage }
                             throw AppException(error)
                         }
                         "uidx_users_email" -> {
-                            val error = UserDomainError.EmailAlreadyTakenError
+                            val error = UserDomainError.EmailAlreadyTaken
                             logger.warn { error.logMessage }
                             throw AppException(error)
                         }

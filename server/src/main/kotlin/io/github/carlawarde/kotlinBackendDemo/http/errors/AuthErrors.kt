@@ -9,16 +9,16 @@ sealed class AuthError(
     statusCode: HttpStatusCode
 ) : HttpError(internalCode, userMessage, logMessage, statusCode) {
 
-    object UnauthorizedError : AuthError(
+    object Unauthorized : AuthError(
         "AUTH_001",
         "Invalid email or password.",
         "Invalid login attempt made.",
         HttpStatusCode.Unauthorized
     )
 
-    object ForbiddenError : AuthError(
+    object Forbidden : AuthError(
         "AUTH_002",
-        "Unauthorized.",
+        "You do not have permission to access this resource.",
         "Unauthorized attempt made to access a resource.",
         HttpStatusCode.Forbidden
     )
