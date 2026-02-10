@@ -12,5 +12,5 @@ data class ErrorResponse(
 data class ValidationErrorResponse(
     val internalCode: String,
     val message: String,
-    val fields: Map<String, String>
+    val fields: Map<String, List<String>>
 )

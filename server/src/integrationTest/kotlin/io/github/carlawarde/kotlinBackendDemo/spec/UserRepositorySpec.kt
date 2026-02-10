@@ -1,9 +1,6 @@
-@file:OptIn(ExperimentalTime::class)
-
 package io.github.carlawarde.kotlinBackendDemo.spec
 
 import io.github.carlawarde.kotlinBackendDemo.core.db.Users
-import io.github.carlawarde.kotlinBackendDemo.core.user.domain.User
 import io.github.carlawarde.kotlinBackendDemo.core.user.repository.UserRepository
 import io.github.carlawarde.kotlinBackendDemo.core.user.repository.UserRepositoryImpl
 import io.github.carlawarde.kotlinBackendDemo.infrastructure.db.DatabaseManager
@@ -16,9 +13,6 @@ import io.micrometer.core.instrument.simple.SimpleMeterRegistry
 import org.jetbrains.exposed.v1.jdbc.SchemaUtils
 import org.jetbrains.exposed.v1.jdbc.deleteAll
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
-import java.util.UUID
-import kotlin.time.Clock
-import kotlin.time.ExperimentalTime
 
 class UserRepositoryIntegrationTest : IntegrationTestBase() {
     init {
@@ -49,34 +43,25 @@ class UserRepositoryIntegrationTest : IntegrationTestBase() {
             }
         }
 
-        fun generateUser(userName: String, email: String): User {
-            return User(
-                UUID.randomUUID(),
-                userName,
-                "test_pwd",
-                email
-            )
-        }
-
         test("create should create a new user successfully") {
-            val user = generateUser("John321", "john321@test.com")
+            val email = "joe@example.com"
+            val username = "joe123"
+            val password = "password"
+            val created = repository.create(username, email, password)
 
-            val created = repository.create(user)
-
-            created.id shouldBe user.id
-            created.username shouldBe user.username
-            created.email shouldBe user.email
+            created.username shouldBe username
+            created.email shouldBe email
         }
 
         test("find existing user by email should return user") {
             val email = "jane@example.com"
-            val userName = "jane_doe"
-            val user = generateUser(userName, email)
-            repository.create(user)
+            val username = "jane_doe"
+
+            repository.create(username, email, "pwd-321")
 
             val found = repository.findByEmail(email)
             found.shouldNotBeNull()
-            found.username shouldBe user.username
+            found.username shouldBe username
         }
 
         test("find non-existing user by email should return null") {

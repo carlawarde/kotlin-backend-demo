@@ -8,6 +8,6 @@ import org.koin.dsl.module
 object DomainModules {
     val userModule = module {
         single<UserRepository> { UserRepositoryImpl(get()) }
-        single { UserService(get()) }
+        single { UserService(get() ,get()) }
     }
 }

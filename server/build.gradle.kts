@@ -32,6 +32,8 @@ dependencies {
     implementation(libs.bundles.koin)
     implementation(libs.bundles.exposed)
     implementation(libs.bundles.db.infra)
+    implementation(libs.bcrypt)
+    implementation(libs.konform)
 
     testImplementation(libs.bundles.testing.common)
     testImplementation(libs.bundles.logging)

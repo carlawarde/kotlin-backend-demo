@@ -6,7 +6,7 @@ import io.github.carlawarde.kotlinBackendDemo.core.errors.DomainError
 import io.github.carlawarde.kotlinBackendDemo.http.dto.ErrorResponse
 import io.github.carlawarde.kotlinBackendDemo.http.dto.ValidationErrorResponse
 import io.github.carlawarde.kotlinBackendDemo.http.errors.HttpError
-import io.github.carlawarde.kotlinBackendDemo.http.errors.HttpValidationError
+import io.github.carlawarde.kotlinBackendDemo.core.errors.RequestValidationError
 import io.github.carlawarde.kotlinBackendDemo.infrastructure.errors.SystemError
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
@@ -17,10 +17,10 @@ import io.ktor.server.response.respond
 import mu.KotlinLogging
 
 fun AppError.toResponse(): Any = when (this) {
-    is HttpValidationError -> ValidationErrorResponse(
+    is RequestValidationError -> ValidationErrorResponse(
         internalCode = internalCode,
         message = userMessage,
-        fields = fieldErrors.associate { it.field to it.reason }
+        fields = fieldErrors.associate { it.field to it.reasons }
     )
     else -> ErrorResponse(internalCode, userMessage)
 }

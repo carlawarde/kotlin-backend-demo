@@ -2,9 +2,11 @@ package io.github.carlawarde.kotlinBackendDemo.core.user.repository
 
 import io.github.carlawarde.kotlinBackendDemo.common.errors.AppException
 import io.github.carlawarde.kotlinBackendDemo.core.db.Users
+import io.github.carlawarde.kotlinBackendDemo.core.db.Users.createdAt
 import io.github.carlawarde.kotlinBackendDemo.core.db.Users.email
 import io.github.carlawarde.kotlinBackendDemo.core.db.Users.id
 import io.github.carlawarde.kotlinBackendDemo.core.db.Users.passwordHash
+import io.github.carlawarde.kotlinBackendDemo.core.db.Users.updatedAt
 import io.github.carlawarde.kotlinBackendDemo.core.db.Users.username
 import io.github.carlawarde.kotlinBackendDemo.core.db.dbQuery
 import io.github.carlawarde.kotlinBackendDemo.core.errors.UserDomainError
@@ -19,33 +21,36 @@ import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.postgresql.util.PSQLException
 import java.util.UUID
 import kotlin.text.lowercase
-import kotlin.time.ExperimentalTime
 
 interface UserRepository {
-    suspend fun create(user: User): User
+    suspend fun create(username: String, email: String, passwordHash: String): User
     suspend fun findByEmail(email: String): User?
     suspend fun findById(id: UUID): User?
 }
 
-@OptIn(ExperimentalTime::class)
 class UserRepositoryImpl(val db: Database) : UserRepository {
     val logger = KotlinLogging.logger {}
 
-    override suspend fun create(user: User): User {
+    override suspend fun create(
+        username: String,
+        email: String,
+        passwordHash: String
+    ): User {
         logger.info { "Inserting new user into database" }
 
         return dbQuery(db) {
             try {
-                Users.insert {
-                    it[id] = user.id
-                    it[username] = user.username
-                    it[email] = user.email
-                    it[passwordHash] = user.passwordHash
+                val userUuid = UUID.randomUUID()
+                Users.insert { statement ->
+                    statement[this.id] = userUuid
+                    statement[this.username] = username
+                    statement[this.email] = email
+                    statement[this.passwordHash] = passwordHash
                 }
 
                 Users
                     .selectAll()
-                    .where { id eq user.id }
+                    .where { id eq userUuid }
                     .single()
                     .let(::toUser)
 
@@ -102,7 +107,9 @@ class UserRepositoryImpl(val db: Database) : UserRepository {
             id = row[id].value,
             username = row[username],
             email = row[email],
-            passwordHash = row[passwordHash]
+            passwordHash = row[passwordHash],
+            createdAt = row[createdAt].toInstant(),
+            updatedAt = row[updatedAt].toInstant()
         )
     }
 }
