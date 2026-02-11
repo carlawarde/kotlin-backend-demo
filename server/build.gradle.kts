@@ -34,6 +34,7 @@ dependencies {
     implementation(libs.bundles.db.infra)
     implementation(libs.bcrypt)
     implementation(libs.konform)
+    implementation(libs.swagger.ui)
 
     testImplementation(libs.bundles.testing.common)
     testImplementation(libs.bundles.logging)

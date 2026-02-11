@@ -22,4 +22,11 @@ sealed class AuthError(
         "Unauthorized attempt made to access a resource.",
         HttpStatusCode.Forbidden
     )
+
+    object AccountLocked : AuthError(
+        "AUTH_003",
+        "Your account has been locked due to too many failed attempts.",
+        "Account locked for security.",
+        HttpStatusCode.Unauthorized
+    )
 }

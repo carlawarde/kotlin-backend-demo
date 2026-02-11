@@ -2,11 +2,11 @@ package io.github.carlawarde.kotlinBackendDemo
 
 
 import ch.qos.logback.classic.LoggerContext
-import io.github.carlawarde.kotlinBackendDemo.core.metrics.ApiMetrics
+import io.github.carlawarde.kotlinBackendDemo.infrastructure.observability.metrics.ApiMetrics
 import io.github.carlawarde.kotlinBackendDemo.infrastructure.config.loadAppConfig
 import io.github.carlawarde.kotlinBackendDemo.infrastructure.lifecycle.AppInfoService
 import io.github.carlawarde.kotlinBackendDemo.infrastructure.lifecycle.State
-import io.github.carlawarde.kotlinBackendDemo.infrastructure.metrics.HealthMetrics
+import io.github.carlawarde.kotlinBackendDemo.infrastructure.observability.metrics.HealthMetrics
 import io.github.carlawarde.kotlinBackendDemo.infrastructure.plugins.*
 import io.ktor.server.application.*
 import io.ktor.server.netty.*

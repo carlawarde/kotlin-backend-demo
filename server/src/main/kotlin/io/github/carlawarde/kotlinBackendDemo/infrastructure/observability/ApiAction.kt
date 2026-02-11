@@ -1,4 +1,4 @@
-package io.github.carlawarde.kotlinBackendDemo.core.metrics
+package io.github.carlawarde.kotlinBackendDemo.infrastructure.observability
 
 sealed interface ApiAction {
     val api: String

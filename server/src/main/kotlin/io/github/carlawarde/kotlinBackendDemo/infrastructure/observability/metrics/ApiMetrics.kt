@@ -1,5 +1,9 @@
-package io.github.carlawarde.kotlinBackendDemo.core.metrics
+package io.github.carlawarde.kotlinBackendDemo.infrastructure.observability.metrics
 
+import io.github.carlawarde.kotlinBackendDemo.infrastructure.observability.ApiAction
+import io.github.carlawarde.kotlinBackendDemo.infrastructure.observability.GameAction
+import io.github.carlawarde.kotlinBackendDemo.infrastructure.observability.ReviewAction
+import io.github.carlawarde.kotlinBackendDemo.infrastructure.observability.UserAction
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tags
@@ -55,9 +59,9 @@ object ApiMetrics {
         val outcomes = listOf("success", "failure")
 
         return listOf(
-            ReviewAction.all,
-            UserAction.all,
-            GameAction.all
+            ReviewAction.Companion.all,
+            UserAction.Companion.all,
+            GameAction.Companion.all
         ).flatten().flatMap { action ->
             outcomes.map { outcome ->
                 Tags.of(

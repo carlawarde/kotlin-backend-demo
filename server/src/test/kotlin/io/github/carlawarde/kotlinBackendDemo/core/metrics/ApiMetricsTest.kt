@@ -1,6 +1,9 @@
 package io.github.carlawarde.kotlinBackendDemo.core.metrics
 
 
+import io.github.carlawarde.kotlinBackendDemo.infrastructure.observability.GameAction
+import io.github.carlawarde.kotlinBackendDemo.infrastructure.observability.ReviewAction
+import io.github.carlawarde.kotlinBackendDemo.infrastructure.observability.metrics.ApiMetrics
 import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec

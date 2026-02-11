@@ -18,6 +18,7 @@ micrometer = "1.12.8"
 kotlin-logging = "3.0.5"
 bcrypt = "0.10.2"
 konform = "0.11.1"
+swagger = "5.31.0"
 
 [libraries]
 # --- Ktor ---
@@ -81,6 +82,9 @@ mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 testcontainers-core = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
 testcontainers-postgres = { module = "org.testcontainers:testcontainers-postgresql", version.ref = "testcontainers" }
 testcontainers-jdbc = { module = "org.testcontainers:testcontainers-jdbc", version.ref = "testcontainers" }
+
+# --- Swagger ---
+swagger-ui = { module = "org.webjars:swagger-ui", version.ref="swagger" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

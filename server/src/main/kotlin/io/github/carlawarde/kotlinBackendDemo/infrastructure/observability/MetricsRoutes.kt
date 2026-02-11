@@ -1,4 +1,4 @@
-package io.github.carlawarde.kotlinBackendDemo.infrastructure.metrics
+package io.github.carlawarde.kotlinBackendDemo.infrastructure.observability
 
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
