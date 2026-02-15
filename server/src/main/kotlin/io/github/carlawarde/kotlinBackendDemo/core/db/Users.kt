@@ -1,6 +1,5 @@
 package io.github.carlawarde.kotlinBackendDemo.core.db
 
-import io.github.carlawarde.kotlinBackendDemo.infrastructure.db.types.citext
 import org.jetbrains.exposed.v1.core.dao.id.UUIDTable
 import org.jetbrains.exposed.v1.datetime.timestampWithTimeZone
 

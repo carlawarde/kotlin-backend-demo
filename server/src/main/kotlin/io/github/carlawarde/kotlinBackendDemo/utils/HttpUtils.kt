@@ -1,4 +1,4 @@
-package io.github.carlawarde.kotlinBackendDemo.http.util
+package io.github.carlawarde.kotlinBackendDemo.utils
 
 import io.ktor.server.application.ApplicationCall
 

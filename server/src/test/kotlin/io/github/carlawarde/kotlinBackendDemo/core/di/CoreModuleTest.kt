@@ -1,8 +1,8 @@
 package io.github.carlawarde.kotlinBackendDemo.core.di
 
+import io.github.carlawarde.kotlinBackendDemo.infrastructure.db.types.DatabaseProvider
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.mockk
-import org.jetbrains.exposed.v1.jdbc.Database
 import org.koin.core.annotation.KoinExperimentalAPI
 import org.koin.test.verify.verify
 
@@ -10,9 +10,9 @@ import org.koin.test.verify.verify
 class CoreModuleTest: FunSpec({
 
     test("koin graph should be valid") {
-        val mockDatabase = mockk<Database>()
+        val mockDatabaseProvider = mockk<DatabaseProvider>()
 
-        coreModule(mockDatabase).verify()
+        coreModule(mockDatabaseProvider).verify()
     }
 
 })

@@ -3,7 +3,7 @@ package io.github.carlawarde.kotlinBackendDemo.spec
 import io.github.carlawarde.kotlinBackendDemo.core.db.Users
 import io.github.carlawarde.kotlinBackendDemo.core.user.repository.UserRepository
 import io.github.carlawarde.kotlinBackendDemo.core.user.repository.UserRepositoryImpl
-import io.github.carlawarde.kotlinBackendDemo.infrastructure.db.DatabaseManager
+import io.github.carlawarde.kotlinBackendDemo.infrastructure.db.DatabaseService
 import io.github.carlawarde.kotlinBackendDemo.setup.IntegrationTestBase
 import io.github.carlawarde.kotlinBackendDemo.setup.IntegrationTestBaseConfig
 import io.kotest.matchers.nulls.shouldBeNull
@@ -16,29 +16,29 @@ import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
 class UserRepositoryIntegrationTest : IntegrationTestBase() {
     init {
-        lateinit var databaseManager: DatabaseManager
+        lateinit var databaseService: DatabaseService
         lateinit var repository: UserRepository
 
         beforeSpec {
             val config = IntegrationTestBaseConfig.getAsDatabaseConfig()
             val registry = SimpleMeterRegistry()
 
-            databaseManager = DatabaseManager(config,registry)
-            databaseManager.start()
+            databaseService = DatabaseService(config,registry)
+            databaseService.start()
 
-            transaction(databaseManager.db) {
+            transaction(databaseService.db) {
                 SchemaUtils.create(Users)
             }
 
-            repository = UserRepositoryImpl(databaseManager.db)
+            repository = UserRepositoryImpl(databaseService)
         }
 
         afterSpec {
-            databaseManager.stop()
+            databaseService.stop()
         }
 
         beforeTest {
-            transaction(databaseManager.db) {
+            transaction(databaseService.db) {
                 Users.deleteAll()
             }
         }

@@ -1,6 +1,6 @@
 package io.github.carlawarde.kotlinBackendDemo.infrastructure.lifecycle
 
-enum class State {
+enum class AppState {
     STARTING,
     RUNNING,
     DRAINING,

@@ -15,6 +15,7 @@ import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.request.path
 import io.ktor.server.response.respond
+import mu.KLogger
 import mu.KotlinLogging
 
 fun AppError.toResponse(): Any = when (this) {
@@ -26,6 +27,16 @@ fun AppError.toResponse(): Any = when (this) {
     else -> ErrorResponse(internalCode, userMessage)
 }
 
+fun AppError.log(logger: KLogger, context: String) {
+    val message = "$context - [$internalCode] $logMessage"
+    when (this) {
+        is SystemError -> logger.error(message)
+        is HttpError -> logger.warn(message)
+        is DomainError -> logger.info(message)
+        else -> logger.warn(message)
+    }
+}
+
 fun Application.configureStatusPages() {
     val logger = KotlinLogging.logger {}
 
@@ -34,9 +45,7 @@ fun Application.configureStatusPages() {
         exception<AppException> { call, exception ->
             val error = exception.error
 
-            logger.warn(exception) {
-                "Handled AppException [${error.internalCode}] on ${call.request.path()}"
-            }
+            error.log(logger, "Handled AppException on ${call.request.path()}")
 
             val status = when (error) {
                 is SystemError -> HttpStatusCode.InternalServerError

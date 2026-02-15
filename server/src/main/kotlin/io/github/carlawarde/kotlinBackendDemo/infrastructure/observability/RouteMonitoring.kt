@@ -1,10 +1,8 @@
-package io.github.carlawarde.kotlinBackendDemo.infrastructure.plugins
+package io.github.carlawarde.kotlinBackendDemo.infrastructure.observability
 
-import io.github.carlawarde.kotlinBackendDemo.core.metrics.ApiMetrics
-import io.github.carlawarde.kotlinBackendDemo.core.metrics.ApiAction
-import io.github.carlawarde.kotlinBackendDemo.http.util.HttpUtils.isFailedCall
+import io.github.carlawarde.kotlinBackendDemo.infrastructure.observability.metrics.ApiMetrics
+import io.github.carlawarde.kotlinBackendDemo.utils.HttpUtils.isFailedCall
 import io.ktor.server.application.*
-import io.ktor.server.application.hooks.CallFailed
 import io.ktor.server.request.path
 import io.ktor.util.*
 import io.micrometer.core.instrument.MeterRegistry

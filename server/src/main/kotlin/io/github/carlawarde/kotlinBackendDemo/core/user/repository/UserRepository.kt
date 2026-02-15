@@ -11,11 +11,11 @@ import io.github.carlawarde.kotlinBackendDemo.core.db.Users.username
 import io.github.carlawarde.kotlinBackendDemo.core.db.dbQuery
 import io.github.carlawarde.kotlinBackendDemo.core.errors.UserDomainError
 import io.github.carlawarde.kotlinBackendDemo.core.user.domain.User
+import io.github.carlawarde.kotlinBackendDemo.infrastructure.db.types.DatabaseProvider
 import mu.KotlinLogging
 import org.jetbrains.exposed.v1.core.ResultRow
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.exceptions.ExposedSQLException
-import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.postgresql.util.PSQLException
@@ -28,7 +28,7 @@ interface UserRepository {
     suspend fun findById(id: UUID): User?
 }
 
-class UserRepositoryImpl(val db: Database) : UserRepository {
+class UserRepositoryImpl(private val dbProvider: DatabaseProvider) : UserRepository {
     val logger = KotlinLogging.logger {}
 
     override suspend fun create(
@@ -38,7 +38,7 @@ class UserRepositoryImpl(val db: Database) : UserRepository {
     ): User {
         logger.info { "Inserting new user into database" }
 
-        return dbQuery(db) {
+        return dbQuery(dbProvider.db) {
             try {
                 val userUuid = UUID.randomUUID()
                 Users.insert { statement ->
@@ -81,7 +81,7 @@ class UserRepositoryImpl(val db: Database) : UserRepository {
     override suspend fun findByEmail(email: String): User? {
         logger.info { "Getting user by email" }
 
-        return dbQuery(db) {
+        return dbQuery(dbProvider.db) {
             Users
                 .selectAll()
                 .where { Users.email eq email.lowercase() }
@@ -93,7 +93,7 @@ class UserRepositoryImpl(val db: Database) : UserRepository {
     override suspend fun findById(id: UUID): User? {
         logger.info { "Getting user by id: $id" }
 
-        return dbQuery(db) {
+        return dbQuery(dbProvider.db) {
             Users
                 .selectAll()
                 .where(Users.id eq(id))

@@ -1,4 +1,4 @@
-package io.github.carlawarde.kotlinBackendDemo.infrastructure.metrics
+package io.github.carlawarde.kotlinBackendDemo.infrastructure.observability.metrics
 
 import io.github.carlawarde.kotlinBackendDemo.infrastructure.lifecycle.AppInfoService
 import io.micrometer.core.instrument.Gauge

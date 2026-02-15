@@ -2,17 +2,16 @@ package io.github.carlawarde.kotlinBackendDemo
 
 
 import ch.qos.logback.classic.LoggerContext
-import io.github.carlawarde.kotlinBackendDemo.core.metrics.ApiMetrics
+import io.github.carlawarde.kotlinBackendDemo.infrastructure.observability.metrics.ApiMetrics
 import io.github.carlawarde.kotlinBackendDemo.infrastructure.config.loadAppConfig
 import io.github.carlawarde.kotlinBackendDemo.infrastructure.lifecycle.AppInfoService
-import io.github.carlawarde.kotlinBackendDemo.infrastructure.lifecycle.State
-import io.github.carlawarde.kotlinBackendDemo.infrastructure.metrics.HealthMetrics
+import io.github.carlawarde.kotlinBackendDemo.infrastructure.lifecycle.AppState
+import io.github.carlawarde.kotlinBackendDemo.infrastructure.observability.metrics.HealthMetrics
 import io.github.carlawarde.kotlinBackendDemo.infrastructure.plugins.*
 import io.ktor.server.application.*
 import io.ktor.server.netty.*
 import mu.KotlinLogging
 import org.slf4j.LoggerFactory
-
 
 val logger = KotlinLogging.logger {}
 
@@ -24,22 +23,23 @@ fun Application.module() {
 
     logger.info("Configuring plugins...")
     val registry = configureMonitoring(appConfig.metrics)
-    val databaseManager = configureDatabase(appConfig.database, registry)
-    configureDependencyInjection(databaseManager.db)
+    val databaseManager = DatabaseSetup.configure(appConfig.database, registry)
+    configureDependencyInjection(databaseManager)
     configureSerialization()
     configureStatusPages()
+    configureRateLimit()
 
     val appInfoService = AppInfoService(databaseManager)
     HealthMetrics.build(registry, appInfoService)
     ApiMetrics.build(registry)
 
-    configureRoutes(appInfoService, registry)
+    configureRoutes(appInfoService, registry, databaseManager)
 
-    appInfoService.setStatus(State.RUNNING)
+    appInfoService.setStatus(AppState.RUNNING)
 
     this.monitor.subscribe(ApplicationStopping) {
         logger.info("Application is shutting down...")
-        appInfoService.setStatus(State.DRAINING)
+        appInfoService.setStatus(AppState.DRAINING)
     }
 
     this.monitor.subscribe(ApplicationStopped) {
@@ -47,6 +47,6 @@ fun Application.module() {
         databaseManager.stop()
         val loggerContext = LoggerFactory.getILoggerFactory() as LoggerContext
         loggerContext.stop()
-        appInfoService.setStatus(State.STOPPED)
+        appInfoService.setStatus(AppState.STOPPED)
     }
 }

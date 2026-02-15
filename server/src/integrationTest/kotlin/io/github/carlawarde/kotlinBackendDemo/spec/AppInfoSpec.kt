@@ -1,7 +1,7 @@
 package io.github.carlawarde.kotlinBackendDemo.spec
 
 import io.github.carlawarde.kotlinBackendDemo.infrastructure.lifecycle.AppInfoService
-import io.github.carlawarde.kotlinBackendDemo.infrastructure.lifecycle.State
+import io.github.carlawarde.kotlinBackendDemo.infrastructure.lifecycle.AppState
 import io.github.carlawarde.kotlinBackendDemo.infrastructure.lifecycle.appInfoRoutes
 import io.github.carlawarde.kotlinBackendDemo.setup.IntegrationTestBase
 import io.github.carlawarde.kotlinBackendDemo.setup.buildTestApp
@@ -20,7 +20,7 @@ class AppInfoSpec : IntegrationTestBase() {
             testApplication {
                 val client = buildTestApp(startDatabase = true) { deps ->
                     routing {
-                        appInfoRoutes(AppInfoService(deps.databaseManager))
+                        appInfoRoutes(AppInfoService(deps.databaseService))
                     }
                 }
 
@@ -33,7 +33,7 @@ class AppInfoSpec : IntegrationTestBase() {
             testApplication {
                 val client = buildTestApp(startDatabase = true) { deps ->
                     routing {
-                        appInfoRoutes(AppInfoService(deps.databaseManager))
+                        appInfoRoutes(AppInfoService(deps.databaseService))
                     }
                 }
 
@@ -45,8 +45,8 @@ class AppInfoSpec : IntegrationTestBase() {
         test("status should be RUNNING when application is up") {
             testApplication {
                 val client = buildTestApp(startDatabase = true) { deps ->
-                    val appInfoService = AppInfoService(deps.databaseManager)
-                    appInfoService.setStatus(State.RUNNING)
+                    val appInfoService = AppInfoService(deps.databaseService)
+                    appInfoService.setStatus(AppState.RUNNING)
                     routing {
                         appInfoRoutes(appInfoService)
                     }
