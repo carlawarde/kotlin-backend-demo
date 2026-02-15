@@ -29,7 +29,6 @@ services:
       - .env
     environment:
       JAVA_OPTS: "-Xms256m -Xmx512m"
-      SERVICE_INSTANCE: ${HOSTNAME}
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:8080/health/live"]
       interval: 60s

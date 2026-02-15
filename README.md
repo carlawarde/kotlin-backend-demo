@@ -16,11 +16,14 @@ This project focuses on clean architecture, structured error handling, validatio
 - OpenAPI + Swagger UI
 - Kotest
 - Testcontainers
-
+---
 ## Setup
-1. Clone the repository: ``git clone https://github.com/carlawarde/kotlin-backend-demo.git``
-2. Create a local `.env` file with the following variables:
+1. Clone the repository 
+```bash 
+git clone https://github.com/carlawarde/kotlin-backend-demo.git
 ```
+2. Create a local `.env` file with the following variables:
+```env
 SERVICE_NAME=kotlin_backend_demo
 ENVIRONMENT=local
 REGION=local
@@ -36,11 +39,28 @@ DB_NAME=demo_db
 DB_USER=[USERNAME]
 DB_PASSWORD=[PASSWORD]
 ```
-3. You now have two ways to run the application:
-   1. Gradle: ``gradlew build && gradlew run``
-   2. DockerCompose via some helper scripts: ``./scripts/buildAndRunApp.sh``. 
-      Please note this will create two Docker containers: One for the application and one for the Postgresql database.
+3. Run the application:
+   1. **Gradle**
+   
+      ```bash
+      ./gradlew run
+      ```
+      Runs the application locally without provisioning a database.<br>
+      Core routes will return `503 Service Unavailable` until a database becomes available.
+   2. **Docker Compose**
 
+      ```bash
+      ./scripts/buildAndRunApp.sh
+      ```
+
+      This will start:
+      
+      - The application container
+       - A PostgreSQL container
+      
+      The application will automatically connect and run migrations.
+
+---
 ## Features
 ### User Management
 - [x] User registration 
