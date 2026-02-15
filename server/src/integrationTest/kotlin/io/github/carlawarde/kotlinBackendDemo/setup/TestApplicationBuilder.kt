@@ -1,10 +1,10 @@
 package io.github.carlawarde.kotlinBackendDemo.setup
 
 import io.github.carlawarde.kotlinBackendDemo.infrastructure.config.loadAppConfig
-import io.github.carlawarde.kotlinBackendDemo.infrastructure.db.DatabaseManager
+import io.github.carlawarde.kotlinBackendDemo.infrastructure.db.DatabaseService
 import io.github.carlawarde.kotlinBackendDemo.infrastructure.lifecycle.AppInfoService
-import io.github.carlawarde.kotlinBackendDemo.infrastructure.lifecycle.State
-import io.github.carlawarde.kotlinBackendDemo.infrastructure.plugins.configureDatabase
+import io.github.carlawarde.kotlinBackendDemo.infrastructure.lifecycle.AppState
+import io.github.carlawarde.kotlinBackendDemo.infrastructure.plugins.DatabaseSetup
 import io.github.carlawarde.kotlinBackendDemo.infrastructure.plugins.configureSerialization
 import io.github.carlawarde.kotlinBackendDemo.infrastructure.plugins.configureStatusPages
 import io.ktor.client.HttpClient
@@ -30,10 +30,10 @@ fun ApplicationTestBuilder.buildTestApp(
     application {
         val appConfig = loadAppConfig(environment.config)
 
-        val databaseManager = if (startDatabase) {
-            configureDatabase(appConfig.database, registry)
+        val databaseService = if (startDatabase) {
+            DatabaseSetup.configure(appConfig.database, registry)
         } else {
-            DatabaseManager(appConfig.database, registry)
+            DatabaseService(appConfig.database, registry)
         }
 
         configureSerialization()
@@ -42,10 +42,10 @@ fun ApplicationTestBuilder.buildTestApp(
         configure(
             TestDeps(
                 registry = registry,
-                databaseManager = databaseManager
+                databaseService = databaseService
             )
         )
-        AppInfoService(databaseManager).setStatus(State.RUNNING)
+        AppInfoService(databaseService).setStatus(AppState.RUNNING)
     }
 
     val client: HttpClient = createClient {
