@@ -27,6 +27,7 @@ fun Application.module() {
     configureDependencyInjection(databaseManager)
     configureSerialization()
     configureStatusPages()
+    configureRateLimit()
 
     val appInfoService = AppInfoService(databaseManager)
     HealthMetrics.build(registry, appInfoService)
